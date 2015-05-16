@@ -18,7 +18,7 @@ public class Setting {
 
 	static {
 		try {
-			database = new Gson().fromJson(new FileReader(Setting.class.getResource("/next-database.json").getFile()), Database.class);
+			database = new Gson().fromJson(new FileReader(Setting.class.getResource("/next-jdbc-mysql.json").getFile()), Database.class);
 		} catch (Exception e) {
 			database = new Database();
 		}

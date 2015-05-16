@@ -43,14 +43,6 @@ pom.xml에 아래의 레파지토리와 Dependency설정을 추가합니다.
     GDAO<User> gdao = new GDAO<User>(new Transaction());
     gdao.close();
     
-#### example
-    @Mapping(method = Method.GET, before="loginCheck")
-    public void getAnswers(DAO dao, GDAO<User> userDAO) {
-        // 파라미터에서 사용시 메서드 내에서 트랜젝션
-        dao.insert(user);
-        dao.update(user);
-        userDAO.delete(user);
-    } // 이후에 close()호출되므로 close()하지 않아도 됨.
     
 ## TableMaker.class
 아래의 어노테이션 설정하고 모델만 만들면 테이블 만들어줍니다.
@@ -90,9 +82,9 @@ pom.xml에 아래의 레파지토리와 Dependency설정을 추가합니다.
   
 
 # Setting
-resource폴더 내에 next-database.json 위치 (기본 세팅을 담당)
+resource폴더 내에 next-jdbc-mysql.json 위치 (기본 세팅을 담당)
 
-## next-database.json (resources/next-database.json)
+## next-jdbc-mysql.json (resources/next-jdbc-mysql.json)
 ### Setting Required Options : 아래 옵션은 필수입니다.
 
     {
