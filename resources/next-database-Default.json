@@ -1,0 +1,84 @@
+{
+  "basePackage" : "",
+  "connectionSetting": {
+    "minConnectionsPerPartition": 0,
+    "maxConnectionsPerPartition": 10,
+    "acquireIncrement": 2,
+    "partitionCount": 1,
+    "jdbcUrl": "",
+    "username": "",
+    "password": "",
+    "idleConnectionTestPeriodInSeconds": 14400,
+    "idleMaxAgeInSeconds": 3600,
+    "statementsCacheSize": 0,
+    "statementsCachedPerConnection": 0,
+    "releaseHelperThreads": 0,
+    "statementReleaseHelperThreads": 0,
+    "closeConnectionWatch": false,
+    "logStatementsEnabled": false,
+    "acquireRetryDelayInMs": 7000,
+    "acquireRetryAttempts": 5,
+    "lazyInit": false,
+    "transactionRecoveryEnabled": false,
+    "disableJMX": false,
+    "queryExecuteTimeLimitInMs": 0,
+    "poolAvailabilityThreshold": 0,
+    "disableConnectionTracking": false,
+    "connectionTimeoutInMs": 0,
+    "closeConnectionWatchTimeoutInMs": 0,
+    "maxConnectionAgeInSeconds": 0,
+    "serviceOrder": "FIFO",
+    "statisticsEnabled": false,
+    "defaultAutoCommit": true,
+    "defaultReadOnly": false,
+    "defaultTransactionIsolationValue": -1,
+    "externalAuth": false,
+    "deregisterDriverOnClose": false,
+    "nullOnConnectionTimeout": false,
+    "resetConnectionOnClose": false,
+    "detectUnresolvedTransactions": false,
+    "poolStrategy": "DEFAULT",
+    "closeOpenStatements": false,
+    "detectUnclosedStatements": false
+  },
+  "createOption": {
+    "table_suffix": "ENGINE \u003d InnoDB DEFAULT CHARACTER SET utf8",
+    "stringOptions": {
+      "dataType": "VARCHAR(255)",
+      "notNull": true,
+      "hasDefaultValue": true,
+      "defaultValue": ""
+    },
+    "integerOptions": {
+      "dataType": "INTEGER",
+      "notNull": true,
+      "hasDefaultValue": true,
+      "defaultValue": 0
+    },
+    "booleanOptions": {
+      "dataType": "TINYINT(1)",
+      "notNull": true,
+      "hasDefaultValue": true,
+      "defaultValue": 0
+    },
+    "dateOptions": {
+      "dataType": "DATETIME",
+      "notNull": true,
+      "hasDefaultValue": true,
+      "defaultValue": "CURRENT_TIMESTAMP"
+    },
+    "floatOptions": {
+      "dataType": "FLOAT",
+      "notNull": true,
+      "hasDefaultValue": true,
+      "defaultValue": 0
+    },
+    "longOptions": {
+      "dataType": "BIGINT",
+      "notNull": true,
+      "hasDefaultValue": true,
+      "defaultValue": 0
+    }
+  }
+}
+
