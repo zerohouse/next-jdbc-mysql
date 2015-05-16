@@ -157,11 +157,12 @@ public class DAO extends DAORaw {
 	 *            채울 object
 	 * @return boolean 실행결과
 	 */
-	public Object fill(Object object) {
+	@SuppressWarnings("unchecked")
+	public <T> T fill(T object) {
 		KeyParams kp = new NullableParams(Setting.getSqlSupports(), object);
 		Map<String, Object> recordMap = getRecord(String.format("SELECT * FROM %s WHERE %s", kp.getTableName(), kp.getKeyFieldNames(EQ, and)), kp
 				.getKeyParams().toArray());
-		return Parser.setObject(object, recordMap);
+		return (T) Parser.setObject(object.getClass(), recordMap);
 	}
 
 	private final static String INSERT = "INSERT %s SET %s";
