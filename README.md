@@ -9,7 +9,7 @@ pom.xml에 아래의 레파지토리와 Dependency설정을 추가합니다.
     <repository>
         <id>next-mvn-repo</id>
         <url>https://raw.github.com/zerohouse/next-jdbc-mysql/mvn-repo/</url>
-	</repository>
+    </repository>
 
 ###Dependency
 	<dependency>
@@ -21,7 +21,7 @@ pom.xml에 아래의 레파지토리와 Dependency설정을 추가합니다.
 
 # DAO
 어노테이션 기반 모델 설정 -> JDBC 한줄로 해결
-테이블 생성 SQL 파일도 필요없습니다.
+테이블 생성, 테스트데이터 관리, CRUD까지 모두 자동화 합니다.
     
 
 ## DAO.class, GDAO<T>.class
@@ -44,16 +44,17 @@ pom.xml에 아래의 레파지토리와 Dependency설정을 추가합니다.
     gdao.close();
     
     
-## TableMaker.class
+## TableMaker.class, PackageCreator.class
 아래의 어노테이션 설정하고 모델만 만들면 테이블 만들어줍니다.
 
 ### Example Usage
-    boolean ifExistDrop = false;
-    TableMaker.create(ifExsitDrop); // 모든 테이블 생성
-    TableMaker tm = new TableMaker(User.class, dao); // User 테이블 생성
+    PackageCreator.create(); // 모든 테이블 생성
+    PackageCreator.drop(); // 모든 테이블 드롭
+    PackageCreator.reset(); // 모든 테이블 리셋
+    TableMaker tm = new TableMaker(User.class, new DAO()); // User 테이블 생성
     tm.dropTable();
 	tm.createTable();
-    tm.reset(); // 드롭 후 크리에이트
+    tm.reset();
     
     
 ### @Table, @Key, @Column, @Exclude, @RequiredRegex
