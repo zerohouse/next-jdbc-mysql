@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import next.jdbc.mysql.DAORaw;
 import next.jdbc.mysql.setting.Parser;
 import next.jdbc.mysql.setting.Setting;
 import next.jdbc.mysql.sql.KeyParams;
