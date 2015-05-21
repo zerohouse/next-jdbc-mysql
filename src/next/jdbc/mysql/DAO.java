@@ -155,7 +155,7 @@ public class DAO extends DAORaw {
 	 *
 	 * @param object
 	 *            채울 object
-	 * @return boolean 실행결과
+	 * @return Object 해당 Object
 	 */
 	public <T> T fill(T object) {
 		KeyParams kp = new NullableParams(Setting.getSqlSupports(), object);

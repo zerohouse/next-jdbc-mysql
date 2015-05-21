@@ -6,8 +6,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Primary Key필드입니다. 
- * 
+ * Primary Key필드입니다. <br>
+ * AUTO_INCREMENT 지정가능합니다. 
  */
 
 @Retention(RetentionPolicy.RUNTIME)

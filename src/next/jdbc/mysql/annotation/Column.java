@@ -8,6 +8,13 @@ import java.lang.annotation.Target;
 /**
  * 해당하는 칼럼의 설정을 지정합니다.
  * 
+ * value : 칼럼이름<br>
+ * DATA_TYPE : SQL data Type<br>
+ * function : mysql function( ex: index, unique... )
+ * NULL : NULL값 허용 여부<br>
+ * DEFAULT : NULL값 허용 여부<br>
+ * NULL : NULL값 허용 여부<br>
+ * 
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)

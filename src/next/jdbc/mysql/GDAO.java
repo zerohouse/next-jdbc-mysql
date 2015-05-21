@@ -141,7 +141,7 @@ public class GDAO<T> extends DAORaw {
 	 *
 	 * @param object
 	 *            채울 object
-	 * @return boolean 실행결과
+	 * @return Object 해당 Object
 	 */
 	public T fill(T object) {
 		KeyParams kp = new NullableParams(Setting.getSqlSupports(), object);

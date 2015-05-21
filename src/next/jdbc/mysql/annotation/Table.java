@@ -8,7 +8,9 @@ import java.lang.annotation.Target;
 
 /**
  * 테이블 설정을 지정합니다.<br>
- * neverDrop을 true로 설정하면, 리셋 설정이 되어 있어도 테이블을 드롭하지 않습니다.
+ * value : table명<br>
+ * 
+ * neverDrop을 true로 설정하면, TableMaker에서 drop, reset작업시 테이블을 드롭하지 않습니다.
  * 
  */
 
