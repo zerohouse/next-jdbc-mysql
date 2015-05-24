@@ -26,7 +26,7 @@ public class SqlSupports {
 	private void defineClass(Class<?> cLass) {
 		String tableName = cLass.getSimpleName();
 		Table table = cLass.getAnnotation(Table.class);
-		String prefix = table.prefix();
+		String prefix = table.columnPrefix();
 		if (!table.value().equals(""))
 			tableName = table.value();
 		tableNameMap.put(cLass, tableName);

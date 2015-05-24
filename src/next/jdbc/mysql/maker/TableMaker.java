@@ -33,8 +33,8 @@ public class TableMaker {
 			createQuery = table.createQuery();
 		if (!table.value().equals(""))
 			tableName = table.value();
-		if (!table.table_suffix().equals(""))
-			table_suffix = table.table_suffix();
+		if (!table.tableSuffix().equals(""))
+			table_suffix = table.tableSuffix();
 	}
 
 	private static final String CREATE_TABLE = "CREATE TABLE IF NOT EXISTS `%s` %s %s";

@@ -21,10 +21,10 @@ public @interface Table {
 
 	String value() default "";
 
-	String table_suffix() default "";
+	String tableSuffix() default "";
 
 	String createQuery() default "";
 
-	String prefix() default "$table_";
+	String columnPrefix() default "$table_";
 
 }
