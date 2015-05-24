@@ -27,6 +27,7 @@ public class SqlSupports {
 		String tableName = cLass.getSimpleName();
 		Table table = cLass.getAnnotation(Table.class);
 		String prefix = table.columnPrefix();
+		String suffix = table.columnSuffix();
 		if (!table.value().equals(""))
 			tableName = table.value();
 		tableNameMap.put(cLass, tableName);
@@ -37,7 +38,7 @@ public class SqlSupports {
 			if (fields[i].isAnnotationPresent(OtherTable.class)) {
 				sqlFieldMap.put(fields[i], new SqlFieldOtherTable(fields[i]));
 			} else {
-				sqlFieldMap.put(fields[i], new SqlFieldNormal(prefix, tableName, fields[i]));
+				sqlFieldMap.put(fields[i], new SqlFieldNormal(prefix, suffix, tableName, fields[i]));
 			}
 		}
 		keyParamsMap.put(cLass, new KeyParams(cLass, this, tableName));

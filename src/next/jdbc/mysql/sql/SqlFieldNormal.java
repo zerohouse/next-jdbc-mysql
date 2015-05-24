@@ -20,9 +20,10 @@ public class SqlFieldNormal implements SqlField {
 	private static final String Q = "`";
 	private final static String SPACE = " ";
 
-	SqlFieldNormal(String prefix, String tableName, Field field) {
+	SqlFieldNormal(String prefix, String suffix, String tableName, Field field) {
 		this.field = field;
 		this.prefix = prefix.replace("$table", tableName);
+		this.suffix = suffix.replace("$table", tableName);
 		setCondition(Setting.getCreateOption());
 		setFieldString();
 		if (!field.isAnnotationPresent(RequiredRegex.class))
@@ -40,6 +41,7 @@ public class SqlFieldNormal implements SqlField {
 		return false;
 	}
 
+	private String suffix;
 	private String prefix;
 	private Pattern pattern;
 	private Field field;
@@ -49,7 +51,7 @@ public class SqlFieldNormal implements SqlField {
 
 	@Override
 	public String getColumnName() {
-		return prefix + columnName;
+		return prefix + columnName + suffix;
 	}
 
 	public String getWrappedColumnName() {

@@ -27,4 +27,6 @@ public @interface Table {
 
 	String columnPrefix() default "$table_";
 
+	String columnSuffix() default "";
+
 }
