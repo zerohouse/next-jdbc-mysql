@@ -9,9 +9,9 @@ import java.lang.annotation.Target;
  * 테이블 설정을 지정합니다.<br>
  * value : table명<br>
  * 
- * columnPrefix : 각 칼럼명 앞에 해당 문자열을 붙입니다. (default="$table_")<br>
- * columnSuffix : 각 칼럼명 뒤에 해당 문자열을 붙입니다. (default:="")<br>
- * $table으로 테이블명을 사용할 수 있습니다.<br>
+ * columnPrefix : 각 칼럼명 앞에 해당 문자열을 붙입니다.<br>
+ * columnSuffix : 각 칼럼명 뒤에 해당 문자열을 붙입니다.<br>
+ *                $table으로 테이블명을 사용할 수 있습니다. (ex: columnPrefix = "$table_")<br>
  * 
  * createQuery : 테이블 Create Query를 하드코딩합니다.<br>
  * 
@@ -31,7 +31,7 @@ public @interface Table {
 
 	String createQuery() default "";
 
-	String columnPrefix() default "$table_";
+	String columnPrefix() default "";
 
 	String columnSuffix() default "";
 
