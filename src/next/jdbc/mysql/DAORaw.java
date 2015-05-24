@@ -105,7 +105,7 @@ public class DAORaw {
 			}
 
 		} catch (SQLException e) {
-			e.printStackTrace();
+			logger.warn(String.format("SQL:%s, Parameters:%s 실행중 %s 에러가 발생했습니다.", sql, parameters, e.getMessage()));
 		} finally {
 			close(pstmt);
 			close(rs);
@@ -181,7 +181,7 @@ public class DAORaw {
 				result.add(columns);
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			logger.warn(String.format("SQL:%s, Parameters:%s 실행중 %s 에러가 발생했습니다.", sql, parameters, e.getMessage()));
 		} finally {
 			close(pstmt);
 			close(rs);
@@ -208,7 +208,7 @@ public class DAORaw {
 			pstmt.execute();
 			return true;
 		} catch (SQLException e) {
-			e.printStackTrace();
+			logger.warn(String.format("SQL:%s, Parameters:%s 실행중 %s 에러가 발생했습니다.", sql, parameters, e.getMessage()));
 			return false;
 		} finally {
 			close(pstmt);
@@ -254,7 +254,7 @@ public class DAORaw {
 				}
 			logger.debug(pstmt.toString());
 		} catch (SQLException e) {
-			e.printStackTrace();
+			logger.warn(String.format("SQL:%s, Parameters:%s 실행중 %s 에러가 발생했습니다.", sql, parameters, e.getMessage()));
 		}
 		return pstmt;
 	}
