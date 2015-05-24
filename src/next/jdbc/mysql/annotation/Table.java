@@ -9,7 +9,13 @@ import java.lang.annotation.Target;
  * 테이블 설정을 지정합니다.<br>
  * value : table명<br>
  * 
- * neverDrop을 true로 설정하면, TableMaker에서 drop, reset작업시 테이블을 드롭하지 않습니다.
+ * columnPrefix : 각 칼럼명 앞에 해당 문자열을 붙입니다. (default="$table_")<br>
+ * columnSuffix : 각 칼럼명 뒤에 해당 문자열을 붙입니다. (default:="")<br>
+ * $table으로 테이블명을 사용할 수 있습니다.<br>
+ * 
+ * createQuery : 테이블 Create Query를 하드코딩합니다.<br>
+ * 
+ * neverDrop : true로 설정하면, TableMaker에서 drop, reset작업시 테이블을 드롭하지 않습니다.
  * 
  */
 
