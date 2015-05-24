@@ -10,10 +10,10 @@ import java.lang.annotation.Target;
  * 
  * value : 칼럼이름<br>
  * DATA_TYPE : SQL data Type<br>
- * function : mysql function( ex: index, unique... )
+ * function : mysql function( ex: index, unique... )<br>
  * NULL : NULL값 허용 여부<br>
- * DEFAULT : NULL값 허용 여부<br>
- * NULL : NULL값 허용 여부<br>
+ * hasDefaultValue : default값 사용 여부<br>
+ * DEFAULT : default 값<br>
  * 
  */
 @Retention(RetentionPolicy.RUNTIME)
