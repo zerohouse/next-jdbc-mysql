@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -105,7 +106,7 @@ public class DAORaw {
 			}
 
 		} catch (SQLException e) {
-			logger.warn(String.format("SQL:%s, Parameters:%s 실행중 %s 에러가 발생했습니다.", sql, parameters, e.getMessage()));
+			errorLog(sql, e, parameters);
 		} finally {
 			close(pstmt);
 			close(rs);
@@ -181,7 +182,7 @@ public class DAORaw {
 				result.add(columns);
 			}
 		} catch (SQLException e) {
-			logger.warn(String.format("SQL:%s, Parameters:%s 실행중 %s 에러가 발생했습니다.", sql, parameters, e.getMessage()));
+			errorLog(sql, e, parameters);
 		} finally {
 			close(pstmt);
 			close(rs);
@@ -208,7 +209,7 @@ public class DAORaw {
 			pstmt.execute();
 			return true;
 		} catch (SQLException e) {
-			logger.warn(String.format("SQL:%s, Parameters:%s 실행중 %s 에러가 발생했습니다.", sql, parameters, e.getMessage()));
+			errorLog(sql, e, parameters);
 			return false;
 		} finally {
 			close(pstmt);
@@ -254,9 +255,13 @@ public class DAORaw {
 				}
 			logger.debug(pstmt.toString());
 		} catch (SQLException e) {
-			logger.warn(String.format("SQL:%s, Parameters:%s 실행중 %s 에러가 발생했습니다.", sql, parameters, e.getMessage()));
+			errorLog(sql, e, parameters);
 		}
 		return pstmt;
+	}
+
+	private static void errorLog(String sql, SQLException e, Object... parameters) {
+		logger.warn(String.format("ERROR[%s] SQL:%s, Parameters:%s", e.getMessage(), sql, Arrays.toString(parameters)));
 	}
 
 }
