@@ -25,11 +25,10 @@ public class SqlSupports {
 
 	private void defineClass(Class<?> cLass) {
 		String tableName = cLass.getSimpleName();
-		if (cLass.isAnnotationPresent(Table.class)) {
-			Table table = cLass.getAnnotation(Table.class);
-			if (!table.value().equals(""))
-				tableName = table.value();
-		}
+		Table table = cLass.getAnnotation(Table.class);
+		String prefix = table.prefix();
+		if (!table.value().equals(""))
+			tableName = table.value();
 		tableNameMap.put(cLass, tableName);
 
 		// 필드 먼저 생성하고 넘겨줘야댐. KeyParams 생성할때 생성된 Sql필드 사용함.
@@ -38,7 +37,7 @@ public class SqlSupports {
 			if (fields[i].isAnnotationPresent(OtherTable.class)) {
 				sqlFieldMap.put(fields[i], new SqlFieldOtherTable(fields[i]));
 			} else {
-				sqlFieldMap.put(fields[i], new SqlFieldNormal(tableName, fields[i]));
+				sqlFieldMap.put(fields[i], new SqlFieldNormal(prefix, tableName, fields[i]));
 			}
 		}
 		keyParamsMap.put(cLass, new KeyParams(cLass, this, tableName));

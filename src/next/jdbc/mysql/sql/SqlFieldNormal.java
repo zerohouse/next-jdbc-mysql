@@ -14,15 +14,13 @@ import next.jdbc.mysql.setting.TableCreate;
 public class SqlFieldNormal implements SqlField {
 
 	private static final String AUTO_INCREMENT = "AUTO_INCREMENT";
-	private static final String UNDER_BAR = "_";
 	private static final String DEFAULT = "DEFAULT";
 	private static final String NOT = "NOT";
 	private static final String NULL = "NULL";
 	private static final String Q = "`";
 	private final static String SPACE = " ";
 
-	SqlFieldNormal(String tableName, Field field) {
-		this.tableName = tableName;
+	SqlFieldNormal(String prefix, String tableName, Field field) {
 		this.field = field;
 		setCondition(Setting.getCreateOption());
 		setFieldString();
@@ -30,6 +28,7 @@ public class SqlFieldNormal implements SqlField {
 			return;
 		String regex = field.getAnnotation(RequiredRegex.class).value();
 		pattern = Pattern.compile(regex);
+		this.prefix = prefix.replace("$table", tableName);
 	}
 
 	public boolean check(Object param) {
@@ -41,8 +40,8 @@ public class SqlFieldNormal implements SqlField {
 		return false;
 	}
 
+	private String prefix;
 	private Pattern pattern;
-	private String tableName;
 	private Field field;
 	private String columnName;
 
@@ -50,11 +49,11 @@ public class SqlFieldNormal implements SqlField {
 
 	@Override
 	public String getColumnName() {
-		return columnName;
+		return prefix + columnName;
 	}
 
 	public String getWrappedColumnName() {
-		return Q + columnName + Q;
+		return Q + getColumnName() + Q;
 	}
 
 	public String getFieldString() {
@@ -100,7 +99,7 @@ public class SqlFieldNormal implements SqlField {
 
 	private void setFieldString() {
 		fieldString = "";
-		columnName = tableName + UNDER_BAR + field.getName();
+		columnName = field.getName();
 		if (!field.isAnnotationPresent(Column.class)) {
 			fieldString += getWrappedColumnName() + SPACE + type + SPACE;
 			if (field.isAnnotationPresent(Key.class) && field.getAnnotation(Key.class).AUTO_INCREMENT()) {

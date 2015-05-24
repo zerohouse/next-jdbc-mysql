@@ -5,7 +5,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-
 /**
  * 테이블 설정을 지정합니다.<br>
  * value : table명<br>
@@ -19,11 +18,13 @@ import java.lang.annotation.Target;
 public @interface Table {
 
 	boolean neverDrop() default false;
-	
+
 	String value() default "";
 
 	String table_suffix() default "";
 
 	String createQuery() default "";
+
+	String prefix() default "$table_";
 
 }
