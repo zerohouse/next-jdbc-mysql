@@ -12,7 +12,6 @@ import next.jdbc.mysql.annotation.OtherTable;
 import next.jdbc.mysql.annotation.Table;
 import next.jdbc.mysql.setting.Setting;
 import next.jdbc.mysql.sql.SqlFieldNormal;
-import next.jdbc.mysql.sql.SqlSupports;
 
 public class TableMaker {
 
@@ -73,7 +72,7 @@ public class TableMaker {
 				continue;
 			if (fields[i].isAnnotationPresent(Exclude.class))
 				continue;
-			SqlFieldNormal fm = (SqlFieldNormal) new SqlSupports().getSqlField(fields[i]);
+			SqlFieldNormal fm = (SqlFieldNormal) Setting.getSqlSupports().getSqlField(fields[i]);
 			result += fm.getFieldString() + ", ";
 			if (fields[i].isAnnotationPresent(Key.class)) {
 				addFunction(fm, PRIMARY_KEY);

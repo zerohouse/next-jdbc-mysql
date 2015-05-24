@@ -22,13 +22,13 @@ public class SqlFieldNormal implements SqlField {
 
 	SqlFieldNormal(String prefix, String tableName, Field field) {
 		this.field = field;
+		this.prefix = prefix.replace("$table", tableName);
 		setCondition(Setting.getCreateOption());
 		setFieldString();
 		if (!field.isAnnotationPresent(RequiredRegex.class))
 			return;
 		String regex = field.getAnnotation(RequiredRegex.class).value();
 		pattern = Pattern.compile(regex);
-		this.prefix = prefix.replace("$table", tableName);
 	}
 
 	public boolean check(Object param) {
