@@ -22,7 +22,7 @@ public class TableInfo {
 	private Boolean neverDrop;
 	private String createQuery;
 
-	public String getTableName() {
+	public String getWrappedTableName() {
 		return Q + tableName + Q;
 	}
 

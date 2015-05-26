@@ -30,10 +30,10 @@ public class TableMaker {
 	}
 
 	public String createQuery() {
-		return String.format(CREATE_TABLE, analyzer.getTableInfo().getTableName(), getColumnString(), analyzer.getTableInfo().getSuffix());
+		return String.format(CREATE_TABLE, analyzer.getTableInfo().getWrappedTableName(), getColumnString(), analyzer.getTableInfo().getSuffix());
 	}
 
-	private static final String DROP_TABLE = "DROP TABLE IF EXISTS `%s`";
+	private static final String DROP_TABLE = "DROP TABLE IF EXISTS %s";
 
 	public void dropTable() {
 		if (type.getAnnotation(Table.class).neverDrop())
@@ -42,7 +42,7 @@ public class TableMaker {
 	}
 
 	public String dropQuery() {
-		return String.format(DROP_TABLE, analyzer.getTableInfo().getTableName());
+		return String.format(DROP_TABLE, analyzer.getTableInfo().getWrappedTableName());
 	}
 
 	public void reset() {

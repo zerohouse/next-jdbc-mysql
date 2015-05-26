@@ -17,31 +17,31 @@ public class QueryMaker {
 	public Query select(Class<?> type) {
 		TypeAnalyzer typeAnalyzer = new TypeAnalyzer(type);
 		Query result = typeAnalyzer.getKeyFields().getQuery(EQ, COMMA);
-		return result.setQuery(String.format(SELECT, ASTAR, typeAnalyzer.getTableInfo().getTableName(), result.getQueryString()));
+		return result.setQuery(String.format(SELECT, ASTAR, typeAnalyzer.getTableInfo().getWrappedTableName(), result.getQueryString()));
 	}
 
 	public Query delete(Class<?> type) {
 		TypeAnalyzer typeAnalyzer = new TypeAnalyzer(type);
 		Query result = typeAnalyzer.getKeyFields().getQuery(EQ, COMMA);
-		return result.setQuery(String.format(DELETE, typeAnalyzer.getTableInfo().getTableName(), result.getQueryString()));
+		return result.setQuery(String.format(DELETE, typeAnalyzer.getTableInfo().getWrappedTableName(), result.getQueryString()));
 	}
 
 	public Query select(Object record) {
 		ObjectAnalyzer objectAnalyzer = new ObjectAnalyzer(record);
 		Query result = objectAnalyzer.getFieldMap().getNotNullFields().getQuery(EQ, COMMA);
-		return result.setQuery(String.format(SELECT, ASTAR, objectAnalyzer.getTableInfo().getTableName(), result.getQueryString()));
+		return result.setQuery(String.format(SELECT, ASTAR, objectAnalyzer.getTableInfo().getWrappedTableName(), result.getQueryString()));
 	}
 
 	public Query delete(Object record) {
 		ObjectAnalyzer objectAnalyzer = new ObjectAnalyzer(record);
 		Query result = objectAnalyzer.getFieldMap().getNotNullFields().getQuery(EQ, COMMA);
-		return result.setQuery(String.format(DELETE, objectAnalyzer.getTableInfo().getTableName(), result.getQueryString()));
+		return result.setQuery(String.format(DELETE, objectAnalyzer.getTableInfo().getWrappedTableName(), result.getQueryString()));
 	}
 
 	public Query insert(Object record) {
 		ObjectAnalyzer objectAnalyzer = new ObjectAnalyzer(record);
 		Query result = objectAnalyzer.getFieldMap().getNotNullFields().getQuery("", COMMA);
-		return result.setQuery(String.format(INSERT, objectAnalyzer.getTableInfo().getTableName(), result.getQueryString(), makeQ(result.size())));
+		return result.setQuery(String.format(INSERT, objectAnalyzer.getTableInfo().getWrappedTableName(), result.getQueryString(), makeQ(result.size())));
 	}
 
 	public Query update(Object record) {
@@ -51,7 +51,7 @@ public class QueryMaker {
 		Query query = new Query();
 		query.concatParameters(fields);
 		query.concatParameters(keys);
-		return query.setQuery(String.format(UPDATE, objectAnalyzer.getTableInfo().getTableName(), fields.getQueryString(), keys.getQueryString()));
+		return query.setQuery(String.format(UPDATE, objectAnalyzer.getTableInfo().getWrappedTableName(), fields.getQueryString(), keys.getQueryString()));
 	}
 
 	private static final String QC = "?, ";
@@ -75,7 +75,7 @@ public class QueryMaker {
 		query.concatParameters(fields);
 		query.concatParameters(keys);
 		query.concatParameters(fields);
-		return query.setQuery(String.format(INSERT_IF_EXISTS_UPDATE, objectAnalyzer.getTableInfo().getTableName(), fields.getQueryString(),
+		return query.setQuery(String.format(INSERT_IF_EXISTS_UPDATE, objectAnalyzer.getTableInfo().getWrappedTableName(), fields.getQueryString(),
 				keys.getQueryString(), fields.getQueryString()));
 	}
 
