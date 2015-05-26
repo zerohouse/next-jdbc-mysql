@@ -28,6 +28,8 @@ public class ModelMaker<T> {
 	}
 
 	public T setByMap(Map<String, Object> recordMap) {
+		if (recordMap == null)
+			return object;
 		analyzer.getAllFields().forEach(fieldObject -> {
 			Object obj = recordMap.get(fieldObject.getColumnName());
 			if (obj == null)
