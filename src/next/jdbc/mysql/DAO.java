@@ -51,6 +51,8 @@ public class DAO extends DAORaw {
 
 	public <T> T get(Class<T> cLass, String sql, Object... parameters) {
 		Map<String, Object> record = getRecord(sql, parameters);
+		if(record == null)
+			return null;
 		ModelMaker<T> im = new ModelMaker<T>(cLass);
 		im.setByMap(record);
 		T result = im.getObject();
@@ -74,6 +76,8 @@ public class DAO extends DAORaw {
 	public <T> T find(Class<T> cLass, Object... parameters) {
 		Query query = maker.select(cLass);
 		Map<String, Object> record = getRecord(query.getQueryString(), parameters);
+		if(record == null)
+			return null;
 		ModelMaker<T> im = new ModelMaker<T>(cLass);
 		im.setByMap(record);
 		T result = im.getObject();
@@ -164,6 +168,8 @@ public class DAO extends DAORaw {
 	public <T> T fill(T object) {
 		Query query = maker.select(object);
 		Map<String, Object> recordMap = getRecord(query.getQueryString(), query.getParameterArray());
+		if(recordMap == null)
+			return null;
 		@SuppressWarnings("unchecked")
 		ModelMaker<T> im = new ModelMaker<T>((Class<T>) object.getClass());
 		im.setByMap(recordMap);
