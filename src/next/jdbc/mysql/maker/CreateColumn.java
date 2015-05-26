@@ -1,17 +1,15 @@
-package next.jdbc.mysql.sql;
+package next.jdbc.mysql.maker;
 
 import java.lang.reflect.Field;
 import java.util.Date;
-import java.util.regex.Pattern;
 
 import next.jdbc.mysql.annotation.Column;
 import next.jdbc.mysql.annotation.Key;
-import next.jdbc.mysql.annotation.RequiredRegex;
 import next.jdbc.mysql.setting.Setting;
-import next.jdbc.mysql.setting.Table;
 import next.jdbc.mysql.setting.TableCreate;
+import next.jdbc.mysql.setting.TableOptions;
 
-public class SqlFieldNormal implements SqlField {
+public class CreateColumn {
 
 	private static final String AUTO_INCREMENT = "AUTO_INCREMENT";
 	private static final String DEFAULT = "DEFAULT";
@@ -20,46 +18,26 @@ public class SqlFieldNormal implements SqlField {
 	private static final String Q = "`";
 	private final static String SPACE = " ";
 
-	SqlFieldNormal(String prefix, String suffix, String tableName, Field field) {
-		this.field = field;
-		this.prefix = prefix.replace("$table", tableName);
-		this.suffix = suffix.replace("$table", tableName);
-		setCondition(Setting.getCreateOption());
-		setFieldString();
-		if (!field.isAnnotationPresent(RequiredRegex.class))
-			return;
-		String regex = field.getAnnotation(RequiredRegex.class).value();
-		pattern = Pattern.compile(regex);
-	}
-
-	public boolean check(Object param) {
-		if (pattern == null)
-			return true;
-		if (pattern.matcher(param.toString()).matches()) {
-			return true;
-		}
-		return false;
-	}
-
-	private String suffix;
-	private String prefix;
-	private Pattern pattern;
-	private Field field;
 	private String columnName;
+	private Field field;
+	private String defaultValue;
+	private String nullType;
+	private String type;
 
-	private String fieldString;
+	public CreateColumn(String prefix, String suffix, Field field) {
+		this.field = field;
+		setCondition(Setting.getCreateOption());
+		columnName = prefix + field.getName() + suffix;
+		if (!field.isAnnotationPresent(Column.class))
+			return;
+		Column column = field.getAnnotation(Column.class);
+		if ("".equals(column.value()))
+			return;
+		columnName = prefix + column.value() + suffix;
+	}
 
-	@Override
 	public String getColumnName() {
-		return prefix + columnName + suffix;
-	}
-
-	public String getWrappedColumnName() {
-		return Q + getColumnName() + Q;
-	}
-
-	public String getFieldString() {
-		return fieldString;
+		return Q + columnName + Q;
 	}
 
 	private void setCondition(TableCreate options) {
@@ -67,7 +45,7 @@ public class SqlFieldNormal implements SqlField {
 		if (t.equals(Integer.class) || t.equals(int.class)) {
 			setSettings(options.getIntegerOptions());
 		} else if (t.equals(String.class)) {
-			Table to = options.getStringOptions();
+			TableOptions to = options.getStringOptions();
 			if (to.getDefaultValue().equals(""))
 				to.setDefaultValue("''");
 			setSettings(to);
@@ -82,11 +60,7 @@ public class SqlFieldNormal implements SqlField {
 		}
 	}
 
-	private String defaultValue;
-	private String nullType;
-	private String type;
-
-	private void setSettings(Table options) {
+	private void setSettings(TableOptions options) {
 		defaultValue = "";
 		nullType = NULL;
 		this.type = options.getDataType();
@@ -99,49 +73,50 @@ public class SqlFieldNormal implements SqlField {
 		defaultValue += DEFAULT + SPACE + defaultvalue;
 	}
 
-	private void setFieldString() {
-		fieldString = "";
+	public String getCreateString() {
+		String result = "";
 		columnName = field.getName();
 		if (!field.isAnnotationPresent(Column.class)) {
-			fieldString += getWrappedColumnName() + SPACE + type + SPACE;
+			result += getColumnName() + SPACE + type + SPACE;
 			if (field.isAnnotationPresent(Key.class) && field.getAnnotation(Key.class).AUTO_INCREMENT()) {
-				fieldString += AUTO_INCREMENT + SPACE + NOT + SPACE + NULL;
-				return;
+				result += AUTO_INCREMENT + SPACE + NOT + SPACE + NULL;
+				return result;
 			}
-			fieldString += nullType;
+			result += nullType;
 			if (field.isAnnotationPresent(Key.class))
-				return;
-			fieldString += SPACE + defaultValue;
-			return;
+				return result;
+			result += SPACE + defaultValue;
+			return result;
 		}
 		Column column = field.getAnnotation(Column.class);
 		if (!column.value().equals(""))
 			columnName = column.value();
-		fieldString += getWrappedColumnName() + SPACE;
+		result += getColumnName() + SPACE;
 
 		if (column.DATA_TYPE().equals(""))
-			fieldString += type + SPACE;
+			result += type + SPACE;
 		else
-			fieldString += column.DATA_TYPE() + SPACE;
+			result += column.DATA_TYPE() + SPACE;
 
 		if (field.isAnnotationPresent(Key.class) && field.getAnnotation(Key.class).AUTO_INCREMENT()) {
-			fieldString += AUTO_INCREMENT + SPACE;
-			return;
+			result += AUTO_INCREMENT + SPACE;
+			return result;
 		}
 
 		if (column.NULL())
-			fieldString += NULL + SPACE;
+			result += NULL + SPACE;
 		else
-			fieldString += NOT + SPACE + NULL + SPACE;
+			result += NOT + SPACE + NULL + SPACE;
 
 		if (field.isAnnotationPresent(Key.class))
-			return;
+			return result;
 		if (!column.hasDefaultValue())
-			return;
+			return result;
 		if (!column.DEFAULT().equals(""))
-			fieldString += DEFAULT + SPACE + column.DEFAULT();
+			result += DEFAULT + SPACE + column.DEFAULT();
 		else
-			fieldString += defaultValue;
+			result += defaultValue;
+		return result;
 
 	}
 

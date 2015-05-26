@@ -1,12 +1,12 @@
 package next.jdbc.mysql.setting;
 
-public class Table {
+public class TableOptions {
 	private String dataType;
 	private Boolean notNull;
 	private Boolean hasDefaultValue;
 	private Object defaultValue;
 
-	public Table(String dataType, Boolean notNull, Boolean hasDefaultValue, Object defaultValue) {
+	public TableOptions(String dataType, Boolean notNull, Boolean hasDefaultValue, Object defaultValue) {
 		this.dataType = dataType;
 		this.notNull = notNull;
 		this.hasDefaultValue = hasDefaultValue;

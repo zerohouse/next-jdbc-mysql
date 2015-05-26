@@ -15,7 +15,7 @@ pom.xml에 아래의 레파지토리와 Dependency설정을 추가합니다.
 	<dependency>
 		<groupId>at.begin</groupId>
 		<artifactId>next-jdbc-mysql</artifactId>
-		<version>0.0.2</version>
+		<version>0.0.3</version>
 	</dependency>
 
 

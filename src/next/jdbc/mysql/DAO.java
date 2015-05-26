@@ -4,10 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import next.jdbc.mysql.setting.Parser;
-import next.jdbc.mysql.setting.Setting;
-import next.jdbc.mysql.sql.KeyParams;
-import next.jdbc.mysql.sql.NullableParams;
+import next.jdbc.mysql.query.Query;
+import next.jdbc.mysql.query.QueryMaker;
+import next.jdbc.mysql.query.analyze.bind.ModelMaker;
 
 /**
  * Database Access 작업을 수행합니다.<br>
@@ -24,11 +23,15 @@ import next.jdbc.mysql.sql.NullableParams;
 
 public class DAO extends DAORaw {
 
+	private QueryMaker maker;
+
 	public DAO() {
+		maker = new QueryMaker();
 	}
 
 	public DAO(Transaction tran) {
 		super(tran);
+		maker = new QueryMaker();
 	}
 
 	/**
@@ -48,7 +51,9 @@ public class DAO extends DAORaw {
 
 	public <T> T get(Class<T> cLass, String sql, Object... parameters) {
 		Map<String, Object> record = getRecord(sql, parameters);
-		T result = Parser.getObject(cLass, record);
+		ModelMaker<T> im = new ModelMaker<T>(cLass);
+		im.setByMap(record);
+		T result = im.getObject();
 		return result;
 	}
 
@@ -67,10 +72,11 @@ public class DAO extends DAORaw {
 	 * @return T
 	 */
 	public <T> T find(Class<T> cLass, Object... parameters) {
-		KeyParams sp = Setting.getSqlSupports().getKeyParams(cLass);
-		Map<String, Object> record = getRecord(String.format("SELECT * FROM %s WHERE %s", sp.getTableName(), sp.getKeyFieldNames(EQ, and)),
-				parameters);
-		T result = Parser.getObject(cLass, record);
+		Query query = maker.select(cLass);
+		Map<String, Object> record = getRecord(query.getQueryString(), parameters);
+		ModelMaker<T> im = new ModelMaker<T>(cLass);
+		im.setByMap(record);
+		T result = im.getObject();
 		return result;
 	}
 
@@ -94,7 +100,9 @@ public class DAO extends DAORaw {
 		if (records == null)
 			return null;
 		records.forEach(record -> {
-			result.add(Parser.getObject(cLass, record));
+			ModelMaker<T> im = new ModelMaker<T>(cLass);
+			im.setByMap(record);
+			result.add(im.getObject());
 		});
 		return result;
 	}
@@ -114,9 +122,8 @@ public class DAO extends DAORaw {
 	 */
 	@SuppressWarnings("unchecked")
 	public <T> List<T> findList(T object) {
-		KeyParams kp = new NullableParams(Setting.getSqlSupports(), object);
-		return (List<T>) getList(object.getClass(), String.format("SELECT * FROM %s WHERE %s", kp.getTableName(), kp.getKeyFieldNames(EQ, and)), kp
-				.getKeyParams().toArray());
+		Query query = maker.select(object);
+		return (List<T>) getList(object.getClass(), query.getQueryString(), query.getParameterArray());
 	}
 
 	/**
@@ -137,14 +144,11 @@ public class DAO extends DAORaw {
 	 */
 	@SuppressWarnings("unchecked")
 	public <T> List<T> findList(T object, String additionalCondition) {
-		KeyParams kp = new NullableParams(Setting.getSqlSupports(), object);
-		return (List<T>) getList(object.getClass(), String.format("SELECT * FROM %s WHERE %s %s", kp.getTableName(), kp.getKeyFieldNames(EQ, and),
-				additionalCondition), kp.getKeyParams().toArray());
+		Query query = maker.select(object);
+		query.append(" ");
+		query.append(additionalCondition);
+		return (List<T>) getList(object.getClass(), query.getQueryString(), query.getParameterArray());
 	}
-
-	public static final String EQ = "=?";
-	public static final String and = " and ";
-	public static final String comma = ", ";
 
 	/**
 	 * Object를 조건이 맞는 DB의 데이터로 채웁니다.<br>
@@ -158,13 +162,14 @@ public class DAO extends DAORaw {
 	 * @return Object 해당 Object
 	 */
 	public <T> T fill(T object) {
-		KeyParams kp = new NullableParams(Setting.getSqlSupports(), object);
-		Map<String, Object> recordMap = getRecord(String.format("SELECT * FROM %s WHERE %s", kp.getTableName(), kp.getKeyFieldNames(EQ, and)), kp
-				.getKeyParams().toArray());
-		return Parser.setObject(object, recordMap);
+		Query query = maker.select(object);
+		Map<String, Object> recordMap = getRecord(query.getQueryString(), query.getParameterArray());
+		@SuppressWarnings("unchecked")
+		ModelMaker<T> im = new ModelMaker<T>((Class<T>) object.getClass());
+		im.setByMap(recordMap);
+		T result = im.getObject();
+		return result;
 	}
-
-	private final static String INSERT = "INSERT %s SET %s";
 
 	/**
 	 * Object를 DB에 삽입합니다.
@@ -175,15 +180,9 @@ public class DAO extends DAORaw {
 	 * @return boolean 실행결과
 	 */
 	public boolean insert(Object object) {
-		KeyParams sap = Setting.getSqlSupports().getKeyParams(object);
-		if (sap.isEmpty())
-			return false;
-		String fieldsNames = sap.getIntegratedFieldNames(EQ, comma);
-		String sql = String.format(INSERT, sap.getTableName(), fieldsNames);
-		return execute(sql, sap.getIntegratedParams());
+		Query query = maker.insert(object);
+		return execute(query);
 	}
-
-	private final static String INSERT_IFEXISTS_UPDATE = "INSERT INTO %s (%s) VALUES (%s) ON DUPLICATE KEY UPDATE %s";
 
 	/**
 	 * Object를 DB에 삽입합니다. 같은 키를 가진 레코드가 있으면, 업데이트합니다.
@@ -194,26 +193,9 @@ public class DAO extends DAORaw {
 	 * @return boolean 실행결과
 	 */
 	public boolean insertIfExistUpdate(Object object) {
-		KeyParams sap = Setting.getSqlSupports().getKeyParams(object);
-		if (sap.isEmpty())
-			return false;
-		String fieldsNames = sap.getIntegratedFieldNames("", comma);
-		int size = sap.getParams().size() + sap.getKeyParams().size();
-		String questions = "";
-		for (int i = 0; i < size; i++) {
-			questions += "?,";
-		}
-		questions = questions.substring(0, questions.length() - 1);
-
-		String sql = String.format(INSERT_IFEXISTS_UPDATE, sap.getTableName(), fieldsNames, questions, sap.getFieldNames(EQ, comma));
-		List<Object> params = new ArrayList<Object>();
-		params.addAll(sap.getParams());
-		params.addAll(sap.getKeyParams());
-		params.addAll(sap.getParams());
-		return execute(sql, params.toArray());
+		Query query = maker.insertIfExistUpdate(object);
+		return execute(query);
 	}
-
-	private final static String UPDATE = "UPDATE %s SET %s WHERE %s";
 
 	/**
 	 * Object를 업데이트합니다. 같은 키를 가진 레코드를 업데이트합니다.
@@ -224,19 +206,9 @@ public class DAO extends DAORaw {
 	 * @return boolean 실행결과
 	 */
 	public boolean update(Object object) {
-		KeyParams sap = Setting.getSqlSupports().getKeyParams(object);
-		if (!sap.hasKeyParams())
-			return false;
-		if (!sap.hasParams())
-			return false;
-		String sql = String.format(UPDATE, sap.getTableName(), sap.getFieldNames(EQ, comma), sap.getKeyFieldNames(EQ, and));
-		List<Object> params = new ArrayList<Object>();
-		params.addAll(sap.getParams());
-		params.addAll(sap.getKeyParams());
-		return execute(sql, params.toArray());
+		Query query = maker.update(object);
+		return execute(query);
 	}
-
-	private final static String DELETE = "DELETE FROM %s WHERE %s";
 
 	/**
 	 * Object를 삭제합니다. 같은 키를 가진 레코드를 삭제합니다.
@@ -247,10 +219,12 @@ public class DAO extends DAORaw {
 	 * @return boolean 실행결과
 	 */
 	public boolean delete(Object object) {
-		KeyParams sap = Setting.getSqlSupports().getKeyParams(object);
-		if (!sap.hasKeyParams())
-			return false;
-		return execute(String.format(DELETE, sap.getTableName(), sap.getKeyFieldNames(EQ, and)), sap.getKeyParams().toArray());
+		Query query = maker.update(object);
+		return execute(query);
+	}
+
+	private boolean execute(Query query) {
+		return execute(query.getQueryString(), query.getParameterArray());
 	}
 
 }

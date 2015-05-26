@@ -1,51 +1,50 @@
-package next.jdbc.mysql.setting;
+package next.jdbc.mysql.query.analyze.bind;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.sql.Date;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import next.jdbc.mysql.annotation.Exclude;
+import next.jdbc.mysql.query.analyze.TypeAnalyzer;
 
-public class Parser {
-	public static <T> T getObject(Class<T> cLass, Map<String, Object> record) {
-		if (record == null)
-			return null;
-		T result = null;
-		result = newInstance(cLass);
-		setObject(result, record);
-		return result;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class ModelMaker<T> {
+
+	private static final Logger logger = LoggerFactory.getLogger(ModelMaker.class);
+
+	private T object;
+	private TypeAnalyzer analyzer;
+
+	public ModelMaker(Class<T> type) {
+		object = newInstance(type);
+		analyzer = new TypeAnalyzer(type);
 	}
 
-	public static <T> T setObject(T record, Map<String, Object> recordMap) {
-		if (recordMap == null)
-			return null;
-		Class<?> cLass = record.getClass();
-		Field[] fields = cLass.getDeclaredFields();
-		for (int i = 0; i < fields.length; i++) {
-			if (fields[i].isAnnotationPresent(Exclude.class))
-				continue;
-			Object obj = recordMap.get(Setting.getSqlSupports().getSqlField(fields[i]).getColumnName());
+	public T getObject() {
+		return object;
+	}
+
+	public T setByMap(Map<String, Object> recordMap) {
+		analyzer.getAllFields().forEach(fieldObject -> {
+			Object obj = recordMap.get(fieldObject.getColumnName());
 			if (obj == null)
-				continue;
-			if (obj.getClass().equals(Timestamp.class)) {
-				obj = new Date(((Timestamp) obj).getTime());
-			}
-			fields[i].setAccessible(true);
+				return;
 			try {
-				fields[i].set(record, obj);
-			} catch (IllegalArgumentException | IllegalAccessException e) {
-				e.printStackTrace();
+				Field field = fieldObject.getField();
+				field.setAccessible(true);
+				field.set(object, obj);
+			} catch (Exception e) {
+				logger.warn(e.getMessage());
 			}
-		}
-		return record;
+		});
+		return object;
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <T> T newInstance(Class<T> type) {
+	public T newInstance(Class<T> type) {
 		List<Object> params = new ArrayList<Object>();
 		Constructor<?>[] constructors = type.getConstructors();
 		if (constructors.length == 0)
@@ -70,7 +69,7 @@ public class Parser {
 		return null;
 	}
 
-	static Object getDefaultValue(Class<?> paramType) {
+	private static Object getDefaultValue(Class<?> paramType) {
 		if (paramType.equals(byte.class)) {
 			return 0;
 		}
@@ -121,4 +120,5 @@ public class Parser {
 		}
 		return null;
 	}
+
 }

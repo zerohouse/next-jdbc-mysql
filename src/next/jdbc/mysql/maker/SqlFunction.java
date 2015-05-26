@@ -3,12 +3,10 @@ package next.jdbc.mysql.maker;
 import java.util.ArrayList;
 import java.util.List;
 
-import next.jdbc.mysql.sql.SqlFieldNormal;
-
 public class SqlFunction {
-	List<SqlFieldNormal> items = new ArrayList<SqlFieldNormal>();
+	List<CreateColumn> items = new ArrayList<CreateColumn>();
 
-	public void add(SqlFieldNormal fm) {
+	public void add(CreateColumn fm) {
 		items.add(fm);
 	}
 
@@ -17,7 +15,7 @@ public class SqlFunction {
 			return "";
 		String result = "";
 		for (int i = 0; i < items.size(); i++) {
-			result += items.get(i).getWrappedColumnName() + ", ";
+			result += items.get(i).getColumnName() + ", ";
 		}
 		if (result.length() > 2)
 			result = result.substring(0, result.length() - 2);

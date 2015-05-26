@@ -2,8 +2,6 @@ package next.jdbc.mysql.setting;
 
 import java.io.FileReader;
 
-import next.jdbc.mysql.sql.SqlSupports;
-
 import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;
 import org.reflections.scanners.TypeAnnotationsScanner;
@@ -14,7 +12,6 @@ public class Setting {
 
 	private static Database database;
 	private static Reflections reflections;
-	private static SqlSupports sqlSupports;
 
 	static {
 		try {
@@ -23,8 +20,6 @@ public class Setting {
 			database = new Database();
 		}
 		reflections = new Reflections(database.getBasePackage(), new SubTypesScanner(), new TypeAnnotationsScanner());
-
-		sqlSupports = new SqlSupports();
 	}
 
 	public static TableCreate getCreateOption() {
@@ -33,10 +28,6 @@ public class Setting {
 
 	public static Reflections getReflections() {
 		return reflections;
-	}
-
-	public static SqlSupports getSqlSupports() {
-		return sqlSupports;
 	}
 
 	public static Database getDatabase() {
