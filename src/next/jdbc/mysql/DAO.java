@@ -122,7 +122,9 @@ public class DAO extends DAORaw {
 	 * User { name : null, age : 10, email : mail@mail.com, gender : null }를<br>
 	 * 파라미터로 넣으면, age=10, mail=mail@mail.com인 유저의 오브젝트가 리턴됩니다.<br>
 	 * <p>
-	 *
+	 * 
+	 * @param <T>
+	 *            클래스 타입
 	 * @param object
 	 *            찾을 object
 	 * @return Object 해당 Object
@@ -143,7 +145,9 @@ public class DAO extends DAORaw {
 	 * <p>
 	 *
 	 * @param <LEFT>
-	 *            Type
+	 *            Type1
+	 * @param <RIGHT>
+	 *            Type2
 	 * @param join
 	 *            조건 오브젝트
 	 * @return Join join된 left, right
@@ -205,11 +209,10 @@ public class DAO extends DAORaw {
 	 * <br>
 	 * <p>
 	 * 
+	 * @param <LEFT>
+	 *            LeftType
 	 * @param <RIGHT>
-	 * @param <LEFT>
-	 *
-	 * @param <LEFT>
-	 *            Type
+	 *            RightType
 	 * @param join
 	 *            조건 오브젝트
 	 * @return JoinSet join된 left, right
@@ -218,6 +221,40 @@ public class DAO extends DAORaw {
 	public <LEFT, RIGHT> List<JoinSet<LEFT, RIGHT>> findList(Join<LEFT, RIGHT> join) {
 		JoinAnalyzer analyzer = new JoinAnalyzer(join);
 		Query query = maker.select(analyzer);
+		List<JoinSet<LEFT, RIGHT>> result = new ArrayList<JoinSet<LEFT, RIGHT>>();
+		List<Map<String, Object>> recordMap = getRecords(query.getQueryString(), query.getParameterArray());
+		recordMap.forEach(map -> {
+			Object left = ModelMaker.newInstance(join.getLeft().getClass());
+			Object right = ModelMaker.newInstance(join.getRight().getClass());
+			ModelMaker.setByMap(left, map, analyzer.getLeft());
+			ModelMaker.setByMap(right, map, analyzer.getRight());
+			result.add(new JoinSet<LEFT, RIGHT>((LEFT) left, (RIGHT) right));
+		});
+		return result;
+	}
+
+	/**
+	 * Object와 조건이 맞는 조인 레코드를 찾습니다.<br>
+	 * <br>
+	 * <p>
+	 * 
+	 * @param <LEFT>
+	 *            LeftType
+	 * @param <RIGHT>
+	 *            RightType
+	 * @param join
+	 *            조건 오브젝트
+	 * @param additionalCondition
+	 *            page, limit, orderBy 등의 조건을 정의합니다.
+	 *            ex)"order by User_id limit 0,3"
+	 * @return JoinSet join된 left, right
+	 */
+	@SuppressWarnings("unchecked")
+	public <LEFT, RIGHT> List<JoinSet<LEFT, RIGHT>> findList(Join<LEFT, RIGHT> join, String additionalCondition) {
+		JoinAnalyzer analyzer = new JoinAnalyzer(join);
+		Query query = maker.select(analyzer);
+		query.append(" ");
+		query.append(additionalCondition);
 		List<JoinSet<LEFT, RIGHT>> result = new ArrayList<JoinSet<LEFT, RIGHT>>();
 		List<Map<String, Object>> recordMap = getRecords(query.getQueryString(), query.getParameterArray());
 		recordMap.forEach(map -> {
