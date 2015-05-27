@@ -2,12 +2,14 @@ package next.jdbc.mysql.join;
 
 public abstract class Join<LEFT, RIGHT> {
 
-	private LEFT left;
-	private RIGHT right;
+	protected LEFT left;
+	protected RIGHT right;
+	protected JoinType joinType;
 
 	public Join(LEFT left, RIGHT right) {
 		this.left = left;
 		this.right = right;
+		this.joinType = JoinType.INNER;
 	}
 
 	public LEFT getLeft() {
@@ -26,7 +28,13 @@ public abstract class Join<LEFT, RIGHT> {
 		this.left = left;
 	}
 
-	public abstract JoinType getJoinType();
+	public JoinType getJoinType() {
+		return joinType;
+	}
+
+	public void setJoinType(JoinType joinType) {
+		this.joinType = joinType;
+	}
 
 	public abstract String getLeftOnFieldName();
 
