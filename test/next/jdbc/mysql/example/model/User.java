@@ -1,4 +1,4 @@
-package test.model;
+package next.jdbc.mysql.example.model;
 
 import next.jdbc.mysql.annotation.Column;
 import next.jdbc.mysql.annotation.Key;
@@ -11,6 +11,9 @@ public class User {
 	public String toString() {
 		return "User [id=" + id + ", email=" + email + ", auth=" + auth + ", name=" + name + ", password=" + password + ", gender=" + gender
 				+ ", message=" + message + ", photo=" + photo + ", cover=" + cover + "]";
+	}
+
+	public User() {
 	}
 
 	public User(String email, String name, String password, String gender) {

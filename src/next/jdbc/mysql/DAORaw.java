@@ -207,7 +207,7 @@ public class DAORaw {
 		try {
 			pstmt = getPSTMT(cm, sql, parameters);
 			pstmt.execute();
-			return true;
+			return pstmt.getUpdateCount() != 0;
 		} catch (SQLException e) {
 			errorLog(sql, e, parameters);
 			return false;

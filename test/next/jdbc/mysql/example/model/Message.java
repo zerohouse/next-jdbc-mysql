@@ -1,4 +1,4 @@
-package test.model;
+package next.jdbc.mysql.example.model;
 
 import java.util.Date;
 
@@ -19,12 +19,14 @@ public class Message {
 	private String message;
 	private Date date;
 
-	
-	
 	@Override
 	public String toString() {
 		return "Message [id=" + id + ", from=" + from + ", to=" + to + ", checked=" + checked + ", head=" + head + ", message=" + message + ", date="
 				+ date + "]";
+	}
+
+	public Message() {
+
 	}
 
 	public Message(Integer from, Integer to, Boolean checked, String head, String message, Date date) {

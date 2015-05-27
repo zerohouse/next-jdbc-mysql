@@ -12,7 +12,7 @@ pom.xml에 아래의 레파지토리와 Dependency설정을 추가합니다.
     </repository>
 
 ###Dependency
-	<dependency>
+    <dependency>
 		<groupId>at.begin</groupId>
 		<artifactId>next-jdbc-mysql</artifactId>
 		<version>0.0.3</version>
@@ -80,6 +80,30 @@ pom.xml에 아래의 레파지토리와 Dependency설정을 추가합니다.
         private List<Post> posts;
         
     }
+
+
+### Join Model Example
+
+
+    public class UserMessage extends Join<User, Message> {
+    
+        public UserMessage(User left, Message right) {
+    		super(left, right);
+    		this.joinType = JoinType.LEFT; // default INNER
+    	}
+    
+    	@Override
+    	public String getLeftOnFieldName() {
+    		return "id"; // User field id;
+    	}
+    
+    	@Override
+    	public String getRightOnFieldName() {
+    		return "from"; // Message field from;
+    	}
+    
+    }
+
   
 
 # Setting
