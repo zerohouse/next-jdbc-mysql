@@ -8,7 +8,7 @@ import next.jdbc.mysql.query.analyze.bind.FieldObject;
 import next.jdbc.mysql.query.analyze.bind.Fields;
 import next.jdbc.mysql.query.analyze.info.TableInfo;
 
-public class TypeAnalyzer {
+public class TypeAnalyzer implements Analyzer {
 
 	private Fields keyFields;
 	private Fields fields;
@@ -23,21 +23,24 @@ public class TypeAnalyzer {
 			if (fields[i].isAnnotationPresent(Exclude.class))
 				continue;
 			if (fields[i].isAnnotationPresent(Key.class)) {
-				keyFields.add(new FieldObject(null, tableInfo.getPrefix(), tableInfo.getSuffix(), fields[i]));
+				keyFields.add(new FieldObject(null, fields[i], tableInfo));
 				continue;
 			}
-			this.fields.add(new FieldObject(null, tableInfo.getPrefix(), tableInfo.getSuffix(), fields[i]));
+			this.fields.add(new FieldObject(null, fields[i], tableInfo));
 		}
 	}
 
+	@Override
 	public Fields getKeyFields() {
 		return keyFields;
 	}
 
+	@Override
 	public Fields getFields() {
 		return fields;
 	}
-	
+
+	@Override
 	public Fields getAllFields() {
 		Fields result = new Fields();
 		result.concat(fields);
@@ -45,8 +48,22 @@ public class TypeAnalyzer {
 		return result;
 	}
 
-	public TableInfo getTableInfo() {
-		return tableInfo;
+	@Override
+	public String getTableName() {
+		return tableInfo.getTableName();
+	}
+
+	public String getColumnPrefix() {
+		return tableInfo.getColumnPrefix();
+	}
+
+	public String getColumnSuffix() {
+		return tableInfo.getColumnSuffix();
+	}
+
+	@Override
+	public Fields getNotNullFields() {
+		return new Fields();
 	}
 
 }

@@ -41,6 +41,10 @@ public class Fields {
 		return query.toString();
 	}
 
+	public FieldObject findByFieldName(String fieldName) {
+		return fields.stream().filter(field -> field.getField().getName().equals(fieldName)).findFirst().get();
+	}
+
 	public void add(FieldObject fieldObject) {
 		fields.add(fieldObject);
 	}

@@ -2,18 +2,18 @@ package next.jdbc.mysql.query.analyze.bind;
 
 import java.lang.reflect.Field;
 
+import next.jdbc.mysql.query.analyze.info.TableInfo;
+
 public class FieldsMap {
 
 	private Fields nullFields;
 	private Fields nullKeyFields;
 	private Fields fields;
 	private Fields keyFields;
-	private String prefix;
-	private String suffix;
+	private TableInfo tableInfo;
 
-	public FieldsMap(String prefix, String suffix) {
-		this.prefix = prefix;
-		this.suffix = suffix;
+	public FieldsMap(TableInfo info) {
+		this.tableInfo = info;
 		nullFields = new Fields();
 		nullKeyFields = new Fields();
 		fields = new Fields();
@@ -21,7 +21,7 @@ public class FieldsMap {
 	}
 
 	public void addNullField(Field field) {
-		nullFields.add(new FieldObject(null, prefix, suffix, field));
+		nullFields.add(new FieldObject(null, field, tableInfo));
 	}
 
 	public void addField(FieldObject fieldObject) {
@@ -29,7 +29,7 @@ public class FieldsMap {
 	}
 
 	public void addNullKeyField(Field field) {
-		nullFields.add(new FieldObject(null, prefix, suffix, field));
+		nullFields.add(new FieldObject(null, field, tableInfo));
 	}
 
 	public void addKeyField(FieldObject fieldObject) {
@@ -56,6 +56,15 @@ public class FieldsMap {
 		Fields result = new Fields();
 		result.concat(fields);
 		result.concat(keyFields);
+		return result;
+	}
+
+	public Fields getAllFields() {
+		Fields result = new Fields();
+		result.concat(fields);
+		result.concat(keyFields);
+		result.concat(nullFields);
+		result.concat(nullKeyFields);
 		return result;
 	}
 

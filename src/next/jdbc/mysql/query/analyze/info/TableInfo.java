@@ -5,33 +5,36 @@ import next.jdbc.mysql.annotation.Table;
 public class TableInfo {
 
 	private static final String TABLE = "$table";
-	private static final String Q = "`";
 
 	public TableInfo(Class<?> type) {
 		Table table = type.getAnnotation(Table.class);
 		tableName = table.value().equals("") ? type.getSimpleName() : table.value();
-		prefix = table.columnPrefix().replace(TABLE, tableName);
-		suffix = table.columnSuffix().replace(TABLE, tableName);
+		columnPrefix = table.columnPrefix().replace(TABLE, tableName);
+		columnSuffix = table.columnSuffix().replace(TABLE, tableName);
 		createQuery = table.createQuery();
 		neverDrop = table.neverDrop();
 	}
 
 	private String tableName;
-	private String prefix;
-	private String suffix;
+	private String columnPrefix;
+	private String columnSuffix;
 	private Boolean neverDrop;
 	private String createQuery;
 
-	public String getWrappedTableName() {
-		return Q + tableName + Q;
+	public String getTableName() {
+		return tableName;
 	}
 
-	public String getPrefix() {
-		return prefix;
+	public void setTableName(String tableName) {
+		this.tableName = tableName;
 	}
 
-	public String getSuffix() {
-		return suffix;
+	public String getColumnPrefix() {
+		return columnPrefix;
+	}
+
+	public String getColumnSuffix() {
+		return columnSuffix;
 	}
 
 	public Boolean getNeverDrop() {

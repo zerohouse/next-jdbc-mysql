@@ -7,6 +7,12 @@ import next.jdbc.mysql.annotation.Table;
 @Table
 public class User {
 
+	@Override
+	public String toString() {
+		return "User [id=" + id + ", email=" + email + ", auth=" + auth + ", name=" + name + ", password=" + password + ", gender=" + gender
+				+ ", message=" + message + ", photo=" + photo + ", cover=" + cover + "]";
+	}
+
 	public User(String email, String name, String password, String gender) {
 		this.email = email;
 		this.name = name;

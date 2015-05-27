@@ -10,6 +10,7 @@ import next.jdbc.mysql.annotation.Exclude;
 import next.jdbc.mysql.annotation.Key;
 import next.jdbc.mysql.annotation.Table;
 import next.jdbc.mysql.query.analyze.TypeAnalyzer;
+import next.jdbc.mysql.setting.Setting;
 
 public class TableMaker {
 
@@ -30,7 +31,7 @@ public class TableMaker {
 	}
 
 	public String createQuery() {
-		return String.format(CREATE_TABLE, analyzer.getTableInfo().getWrappedTableName(), getColumnString(), analyzer.getTableInfo().getSuffix());
+		return String.format(CREATE_TABLE, wrapped(analyzer.getTableName()), getColumnString(), Setting.getCreateOption().getTable_suffix());
 	}
 
 	private static final String DROP_TABLE = "DROP TABLE IF EXISTS %s";
@@ -42,7 +43,7 @@ public class TableMaker {
 	}
 
 	public String dropQuery() {
-		return String.format(DROP_TABLE, analyzer.getTableInfo().getWrappedTableName());
+		return String.format(DROP_TABLE, wrapped(analyzer.getTableName()));
 	}
 
 	public void reset() {
@@ -53,13 +54,19 @@ public class TableMaker {
 	private static final String PRIMARY_KEY = "PRIMARY KEY";
 	private Map<String, SqlFunction> functions = new HashMap<String, SqlFunction>();
 
+	private static final String Q = "`";
+
+	private Object wrapped(String tableName) {
+		return Q + tableName + Q;
+	}
+
 	private String getColumnString() {
 		Field[] fields = type.getDeclaredFields();
 		String result = "";
 		for (int i = 0; i < fields.length; i++) {
 			if (fields[i].isAnnotationPresent(Exclude.class))
 				continue;
-			CreateColumn col = new CreateColumn(analyzer.getTableInfo().getPrefix(), analyzer.getTableInfo().getSuffix(), fields[i]);
+			CreateColumn col = new CreateColumn(analyzer.getColumnPrefix(), analyzer.getColumnSuffix(), fields[i]);
 			result += col.getCreateString() + ", ";
 			if (fields[i].isAnnotationPresent(Key.class)) {
 				addFunction(col, PRIMARY_KEY);

@@ -5,13 +5,14 @@ import java.lang.reflect.Field;
 import next.jdbc.mysql.annotation.Exclude;
 import next.jdbc.mysql.annotation.Key;
 import next.jdbc.mysql.query.analyze.bind.FieldObject;
+import next.jdbc.mysql.query.analyze.bind.Fields;
 import next.jdbc.mysql.query.analyze.bind.FieldsMap;
 import next.jdbc.mysql.query.analyze.info.TableInfo;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ObjectAnalyzer {
+public class ObjectAnalyzer implements Analyzer {
 
 	private final static Logger logger = LoggerFactory.getLogger(ObjectAnalyzer.class);
 
@@ -22,7 +23,7 @@ public class ObjectAnalyzer {
 		Class<?> type = record.getClass();
 		Field[] fields = type.getDeclaredFields();
 		tableInfo = new TableInfo(record.getClass());
-		fieldMap = new FieldsMap(tableInfo.getPrefix(), tableInfo.getSuffix());
+		fieldMap = new FieldsMap(tableInfo);
 		for (int i = 0; i < fields.length; i++) {
 			fieldDefine(record, fields[i]);
 		}
@@ -39,7 +40,7 @@ public class ObjectAnalyzer {
 					fieldMap.addNullKeyField(field);
 					return;
 				}
-				fieldMap.addKeyField(new FieldObject(param, tableInfo.getPrefix(), tableInfo.getPrefix(), field));
+				fieldMap.addKeyField(new FieldObject(param, field, tableInfo));
 				return;
 			} catch (IllegalAccessException | IllegalArgumentException | SecurityException e) {
 				logger.warn(e.getMessage());
@@ -52,7 +53,7 @@ public class ObjectAnalyzer {
 				fieldMap.addNullField(field);
 				return;
 			}
-			fieldMap.addField(new FieldObject(param, tableInfo.getPrefix(), tableInfo.getPrefix(), field));
+			fieldMap.addField(new FieldObject(param, field, tableInfo));
 			return;
 		} catch (IllegalAccessException | IllegalArgumentException | SecurityException e) {
 			logger.warn(e.getMessage());
@@ -60,12 +61,42 @@ public class ObjectAnalyzer {
 		}
 	}
 
-	public TableInfo getTableInfo() {
-		return tableInfo;
+	@Override
+	public Fields getKeyFields() {
+		return fieldMap.getKeyFields();
 	}
 
-	public FieldsMap getFieldMap() {
-		return fieldMap;
+	@Override
+	public Fields getAllFields() {
+		return fieldMap.getAllFields();
+	}
+
+	@Override
+	public Fields getNotNullFields() {
+		return fieldMap.getNotNullFields();
+	}
+
+	@Override
+	public Fields getFields() {
+		return fieldMap.getFields();
+	}
+
+	@Override
+	public String toString() {
+		return "ObjectAnalyzers [fieldMap=" + fieldMap + ", tableInfo=" + tableInfo + "]";
+	}
+
+	public String getColumnSuffix() {
+		return tableInfo.getColumnSuffix();
+	}
+
+	public String getColumnPrefix() {
+		return tableInfo.getColumnPrefix();
+	}
+
+	@Override
+	public String getTableName() {
+		return tableInfo.getTableName();
 	}
 
 }

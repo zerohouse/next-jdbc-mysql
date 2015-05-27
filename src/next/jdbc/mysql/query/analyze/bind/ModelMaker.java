@@ -6,28 +6,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import next.jdbc.mysql.query.analyze.Analyzer;
 import next.jdbc.mysql.query.analyze.TypeAnalyzer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ModelMaker<T> {
+public class ModelMaker {
 
 	private static final Logger logger = LoggerFactory.getLogger(ModelMaker.class);
 
-	private T object;
-	private TypeAnalyzer analyzer;
-
-	public ModelMaker(Class<T> type) {
-		object = newInstance(type);
-		analyzer = new TypeAnalyzer(type);
-	}
-
-	public T getObject() {
-		return object;
-	}
-
-	public T setByMap(Map<String, Object> recordMap) {
+	public static Object setByMap(Object object, Map<String, Object> recordMap) {
+		Analyzer analyzer = new TypeAnalyzer(object.getClass());
 		if (recordMap == null)
 			return object;
 		analyzer.getAllFields().forEach(fieldObject -> {
@@ -45,8 +35,25 @@ public class ModelMaker<T> {
 		return object;
 	}
 
-	@SuppressWarnings("unchecked")
-	public T newInstance(Class<T> type) {
+	public static Object setByMap(Object object, Map<String, Object> recordMap, Analyzer analyzer) {
+		if (recordMap == null)
+			return object;
+		analyzer.getAllFields().forEach(fieldObject -> {
+			Object obj = recordMap.get(fieldObject.getColumnName());
+			if (obj == null)
+				return;
+			try {
+				Field field = fieldObject.getField();
+				field.setAccessible(true);
+				field.set(object, obj);
+			} catch (Exception e) {
+				logger.warn(e.getMessage());
+			}
+		});
+		return object;
+	}
+
+	public static Object newInstance(Class<?> type) {
 		List<Object> params = new ArrayList<Object>();
 		Constructor<?>[] constructors = type.getConstructors();
 		if (constructors.length == 0)
@@ -54,7 +61,7 @@ public class ModelMaker<T> {
 		for (int i = 0; i < constructors.length; i++)
 			if (constructors[i].getParameterTypes().length == 0) {
 				try {
-					return (T) constructors[i].newInstance();
+					return constructors[i].newInstance();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -64,7 +71,7 @@ public class ModelMaker<T> {
 			params.add(getDefaultValue(paramTypes[i]));
 		}
 		try {
-			return (T) type.getConstructors()[0].newInstance(params.toArray());
+			return type.getConstructors()[0].newInstance(params.toArray());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

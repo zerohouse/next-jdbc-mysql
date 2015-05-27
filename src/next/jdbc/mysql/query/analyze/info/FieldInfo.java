@@ -18,12 +18,6 @@ public class FieldInfo {
 		columnName = prefix + column.value() + suffix;
 	}
 
-	private static final String Q = "`";
-
-	public String getWrappedColumnName() {
-		return Q + columnName + Q;
-	}
-
 	public String getColumnName() {
 		return columnName;
 	}
