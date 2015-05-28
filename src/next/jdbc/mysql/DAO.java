@@ -5,11 +5,11 @@ import java.util.List;
 import java.util.Map;
 
 import next.jdbc.mysql.join.Join;
-import next.jdbc.mysql.query.Query;
-import next.jdbc.mysql.query.QueryMaker;
 import next.jdbc.mysql.query.analyze.Analyzer;
 import next.jdbc.mysql.query.analyze.ObjectAnalyzer;
 import next.jdbc.mysql.query.analyze.bind.ModelMaker;
+import next.jdbc.mysql.sql.Sql;
+import next.jdbc.mysql.sql.SqlMaker;
 
 /**
  * Database Access 작업을 수행합니다.<br>
@@ -23,15 +23,15 @@ import next.jdbc.mysql.query.analyze.bind.ModelMaker;
 
 public class DAO extends DAORaw {
 
-	private QueryMaker maker;
+	private SqlMaker maker;
 
 	public DAO() {
-		maker = new QueryMaker();
+		maker = new SqlMaker();
 	}
 
 	public DAO(Transaction tran) {
 		super(tran);
-		maker = new QueryMaker();
+		maker = new SqlMaker();
 	}
 
 	/**
@@ -51,7 +51,7 @@ public class DAO extends DAORaw {
 	public <T> T get(Class<T> type, Object... parameters) {
 		Analyzer analyzer = Analyzer.getAnalyzer(type);
 		analyzer.setKeyParameters(parameters);
-		Query query = maker.select(analyzer);
+		Sql query = maker.select(analyzer);
 		Map<String, Object> record = getRecord(query.getQueryString(), query.getParameterArray());
 		if (record == null)
 			return null;
@@ -121,7 +121,7 @@ public class DAO extends DAORaw {
 	@SuppressWarnings("unchecked")
 	public <T> T find(T object) {
 		Analyzer analyzer = Analyzer.getObjectAnalyzer(object);
-		Query query = maker.select(analyzer);
+		Sql query = maker.select(analyzer);
 		Map<String, Object> recordMap = getRecord(query.getQueryString(), query.getParameterArray());
 		if (recordMap == null)
 			return null;
@@ -144,7 +144,7 @@ public class DAO extends DAORaw {
 	@SuppressWarnings("unchecked")
 	public <T> List<T> findList(T object) {
 		Analyzer analyzer = Analyzer.getObjectAnalyzer(object);
-		Query query = maker.select(analyzer);
+		Sql query = maker.select(analyzer);
 		return (List<T>) getList(object.getClass(), query.getQueryString(), query.getParameterArray());
 	}
 
@@ -167,7 +167,7 @@ public class DAO extends DAORaw {
 	@SuppressWarnings("unchecked")
 	public <T> List<T> findList(T object, String additionalCondition) {
 		Analyzer analyzer = Analyzer.getObjectAnalyzer(object);
-		Query query = maker.select(analyzer);
+		Sql query = maker.select(analyzer);
 		query.append(" ");
 		query.append(additionalCondition);
 		return (List<T>) getList(object.getClass(), query.getQueryString(), query.getParameterArray());
@@ -187,7 +187,7 @@ public class DAO extends DAORaw {
 			Join join = (Join) object;
 			return insert(join.getLeft()) && insert(join.getRight());
 		}
-		Query query = maker.insert(new ObjectAnalyzer(object));
+		Sql query = maker.insert(new ObjectAnalyzer(object));
 		return execute(query);
 	}
 
@@ -205,7 +205,7 @@ public class DAO extends DAORaw {
 			Join join = (Join) object;
 			return insertIfExistUpdate(join.getLeft()) && insertIfExistUpdate(join.getRight());
 		}
-		Query query = maker.insertIfExistUpdate(new ObjectAnalyzer(object));
+		Sql query = maker.insertIfExistUpdate(new ObjectAnalyzer(object));
 		return execute(query);
 	}
 
@@ -223,7 +223,7 @@ public class DAO extends DAORaw {
 			Join join = (Join) object;
 			return update(join.getLeft()) && update(join.getRight());
 		}
-		Query query = maker.update(new ObjectAnalyzer(object));
+		Sql query = maker.update(new ObjectAnalyzer(object));
 		return execute(query);
 	}
 
@@ -243,7 +243,7 @@ public class DAO extends DAORaw {
 			Join join = (Join) object;
 			return update(join.getLeft(), keyFieldNames) && update(join.getRight(), keyFieldNames);
 		}
-		Query query = maker.update(new ObjectAnalyzer(object), keyFieldNames);
+		Sql query = maker.update(new ObjectAnalyzer(object), keyFieldNames);
 		return execute(query);
 	}
 
@@ -261,11 +261,11 @@ public class DAO extends DAORaw {
 			Join join = (Join) object;
 			return delete(join.getLeft()) && delete(join.getRight());
 		}
-		Query query = maker.delete(new ObjectAnalyzer(object));
+		Sql query = maker.delete(new ObjectAnalyzer(object));
 		return execute(query);
 	}
 
-	private boolean execute(Query query) {
+	private boolean execute(Sql query) {
 		return execute(query.getQueryString(), query.getParameterArray());
 	}
 

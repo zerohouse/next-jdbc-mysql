@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
-import next.jdbc.mysql.query.Query;
+import next.jdbc.mysql.sql.Sql;
 
 public class Fields {
 
@@ -19,8 +19,8 @@ public class Fields {
 		this.fields = fields;
 	}
 
-	public Query getQuery(String suffix, String delimiter) {
-		Query query = new Query();
+	public Sql getQuery(String suffix, String delimiter) {
+		Sql query = new Sql();
 		if (fields.size() == 0)
 			return query;
 		fields.forEach(param -> {

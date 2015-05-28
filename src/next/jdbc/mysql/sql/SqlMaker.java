@@ -1,4 +1,4 @@
-package next.jdbc.mysql.query;
+package next.jdbc.mysql.sql;
 
 import java.util.Arrays;
 import java.util.List;
@@ -6,7 +6,7 @@ import java.util.List;
 import next.jdbc.mysql.query.analyze.Analyzer;
 import next.jdbc.mysql.query.analyze.bind.Fields;
 
-public class QueryMaker {
+public class SqlMaker {
 
 	private static final String ASTAR = "*";
 	private static final String EQ = "=?";
@@ -18,26 +18,26 @@ public class QueryMaker {
 	private static final String UPDATE = "UPDATE %s SET %s WHERE %s";
 	private static final String DELETE = "DELETE FROM %s WHERE %s";
 
-	public Query select(Analyzer analyzer) {
-		Query result = analyzer.getNotNullAllFields().getQuery(EQ, AND);
+	public Sql select(Analyzer analyzer) {
+		Sql result = analyzer.getNotNullAllFields().getQuery(EQ, AND);
 		return result.setQuery(String.format(SELECT, ASTAR, analyzer.getTableName(), result.getQueryString()));
 	}
 
-	public Query insert(Analyzer analyzer) {
-		Query result = analyzer.getNotNullAllFields().getQuery("", COMMA);
+	public Sql insert(Analyzer analyzer) {
+		Sql result = analyzer.getNotNullAllFields().getQuery("", COMMA);
 		return result.setQuery(String.format(INSERT, analyzer.getTableName(), result.getQueryString(), makeQ(result.size())));
 	}
 
-	public Query update(Analyzer analyzer) {
-		Query fields = analyzer.getNotNullFields().getQuery(EQ, COMMA);
-		Query keys = analyzer.getNotNullKeyFields().getQuery(EQ, AND);
-		Query query = new Query();
+	public Sql update(Analyzer analyzer) {
+		Sql fields = analyzer.getNotNullFields().getQuery(EQ, COMMA);
+		Sql keys = analyzer.getNotNullKeyFields().getQuery(EQ, AND);
+		Sql query = new Sql();
 		query.concatParameters(fields);
 		query.concatParameters(keys);
 		return query.setQuery(String.format(UPDATE, analyzer.getTableName(), fields.getQueryString(), keys.getQueryString()));
 	}
 
-	public Query update(Analyzer analyzer, String... keyFieldName) {
+	public Sql update(Analyzer analyzer, String... keyFieldName) {
 		Fields update = new Fields();
 		Fields key = new Fields();
 		List<String> keyFields = Arrays.asList(keyFieldName);
@@ -48,16 +48,16 @@ public class QueryMaker {
 			}
 			update.add(field);
 		});
-		Query query = new Query();
-		Query fields = update.getQuery(EQ, COMMA);
-		Query keys = key.getQuery(EQ, AND);
+		Sql query = new Sql();
+		Sql fields = update.getQuery(EQ, COMMA);
+		Sql keys = key.getQuery(EQ, AND);
 		query.concatParameters(fields);
 		query.concatParameters(keys);
 		return query.setQuery(String.format(UPDATE, analyzer.getTableName(), fields.getQueryString(), keys.getQueryString()));
 	}
 
-	public Query delete(Analyzer analyzer) {
-		Query result = analyzer.getNotNullAllFields().getQuery(EQ, AND);
+	public Sql delete(Analyzer analyzer) {
+		Sql result = analyzer.getNotNullAllFields().getQuery(EQ, AND);
 		return result.setQuery(String.format(DELETE, analyzer.getTableName(), result.getQueryString()));
 	}
 
@@ -65,10 +65,10 @@ public class QueryMaker {
 
 	private final static String INSERT_IF_EXISTS_UPDATE = "INSERT INTO %s (%s) VALUES (%s) ON DUPLICATE KEY UPDATE %s";
 
-	public Query insertIfExistUpdate(Analyzer analyzer) {
-		Query notNullfields = analyzer.getNotNullAllFields().getQuery("", COMMA);
-		Query fields = analyzer.getNotNullFields().getQuery(EQ, COMMA);
-		Query query = new Query();
+	public Sql insertIfExistUpdate(Analyzer analyzer) {
+		Sql notNullfields = analyzer.getNotNullAllFields().getQuery("", COMMA);
+		Sql fields = analyzer.getNotNullFields().getQuery(EQ, COMMA);
+		Sql query = new Sql();
 		query.concatParameters(notNullfields);
 		query.concatParameters(fields);
 		return query.setQuery(String.format(INSERT_IF_EXISTS_UPDATE, analyzer.getTableName(), notNullfields.getQueryString(),

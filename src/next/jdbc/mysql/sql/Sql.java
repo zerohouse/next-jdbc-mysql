@@ -1,29 +1,29 @@
-package next.jdbc.mysql.query;
+package next.jdbc.mysql.sql;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Query {
+public class Sql {
 
 	private StringBuilder query;
 	private List<Object> parameters;
 
-	public Query() {
+	public Sql() {
 		query = new StringBuilder();
 		parameters = new ArrayList<Object>();
 	}
 
-	public Query(String query) {
+	public Sql(String query) {
 		this.query = new StringBuilder(query);
 		parameters = new ArrayList<Object>();
 	}
 
-	public Query addParameter(Object parameter) {
+	public Sql addParameter(Object parameter) {
 		parameters.add(parameter);
 		return this;
 	}
 
-	public Query append(String string) {
+	public Sql append(String string) {
 		query.append(string);
 		return this;
 	}
@@ -32,7 +32,7 @@ public class Query {
 		return query.length();
 	}
 
-	public Query delete(int start, int end) {
+	public Sql delete(int start, int end) {
 		query.delete(start, end);
 		return this;
 	}
@@ -41,7 +41,7 @@ public class Query {
 		return query.toString();
 	}
 
-	public Query setQuery(String query) {
+	public Sql setQuery(String query) {
 		this.query = new StringBuilder(query);
 		return this;
 	}
@@ -55,7 +55,7 @@ public class Query {
 		return parameters.size();
 	}
 
-	public Query concatParameters(Query query) {
+	public Sql concatParameters(Sql query) {
 		this.parameters.addAll(query.parameters);
 		return this;
 	}
