@@ -1,4 +1,4 @@
-package next.jdbc.mysql.query.analyze.bind;
+package next.jdbc.mysql.sql.analyze.bind;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.Map;
 
 import next.jdbc.mysql.join.Join;
-import next.jdbc.mysql.query.analyze.Analyzer;
-import next.jdbc.mysql.query.analyze.JoinTypeAnalyzer;
+import next.jdbc.mysql.sql.analyze.Analyzer;
+import next.jdbc.mysql.sql.analyze.JoinTypeAnalyzer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

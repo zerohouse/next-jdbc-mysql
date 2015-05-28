@@ -9,8 +9,8 @@ import next.jdbc.mysql.annotation.Column;
 import next.jdbc.mysql.annotation.Exclude;
 import next.jdbc.mysql.annotation.Key;
 import next.jdbc.mysql.annotation.Table;
-import next.jdbc.mysql.query.analyze.TypeAnalyzer;
 import next.jdbc.mysql.setting.Setting;
+import next.jdbc.mysql.sql.analyze.TypeAnalyzer;
 
 public class TableMaker {
 

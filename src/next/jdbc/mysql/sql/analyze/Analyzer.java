@@ -1,7 +1,7 @@
-package next.jdbc.mysql.query.analyze;
+package next.jdbc.mysql.sql.analyze;
 
 import next.jdbc.mysql.join.Join;
-import next.jdbc.mysql.query.analyze.bind.Fields;
+import next.jdbc.mysql.sql.analyze.bind.Fields;
 
 public interface Analyzer {
 

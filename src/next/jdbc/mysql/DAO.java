@@ -5,11 +5,11 @@ import java.util.List;
 import java.util.Map;
 
 import next.jdbc.mysql.join.Join;
-import next.jdbc.mysql.query.analyze.Analyzer;
-import next.jdbc.mysql.query.analyze.ObjectAnalyzer;
-import next.jdbc.mysql.query.analyze.bind.ModelMaker;
 import next.jdbc.mysql.sql.Sql;
 import next.jdbc.mysql.sql.SqlMaker;
+import next.jdbc.mysql.sql.analyze.Analyzer;
+import next.jdbc.mysql.sql.analyze.ObjectAnalyzer;
+import next.jdbc.mysql.sql.analyze.bind.ModelMaker;
 
 /**
  * Database Access 작업을 수행합니다.<br>

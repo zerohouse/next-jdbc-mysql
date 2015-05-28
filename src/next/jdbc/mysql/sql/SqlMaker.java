@@ -3,8 +3,8 @@ package next.jdbc.mysql.sql;
 import java.util.Arrays;
 import java.util.List;
 
-import next.jdbc.mysql.query.analyze.Analyzer;
-import next.jdbc.mysql.query.analyze.bind.Fields;
+import next.jdbc.mysql.sql.analyze.Analyzer;
+import next.jdbc.mysql.sql.analyze.bind.Fields;
 
 public class SqlMaker {
 

@@ -1,13 +1,13 @@
-package next.jdbc.mysql.query.analyze;
+package next.jdbc.mysql.sql.analyze;
 
 import java.lang.reflect.Field;
 import java.util.stream.Collectors;
 
 import next.jdbc.mysql.annotation.Exclude;
 import next.jdbc.mysql.annotation.Key;
-import next.jdbc.mysql.query.analyze.bind.FieldObject;
-import next.jdbc.mysql.query.analyze.bind.Fields;
-import next.jdbc.mysql.query.analyze.info.TableInfo;
+import next.jdbc.mysql.sql.analyze.bind.FieldObject;
+import next.jdbc.mysql.sql.analyze.bind.Fields;
+import next.jdbc.mysql.sql.analyze.info.TableInfo;
 
 public class TypeAnalyzer implements Analyzer {
 

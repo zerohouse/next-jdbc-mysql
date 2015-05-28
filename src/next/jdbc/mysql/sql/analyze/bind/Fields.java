@@ -1,4 +1,4 @@
-package next.jdbc.mysql.query.analyze.bind;
+package next.jdbc.mysql.sql.analyze.bind;
 
 import java.util.ArrayList;
 import java.util.List;

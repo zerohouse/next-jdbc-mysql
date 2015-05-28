@@ -1,4 +1,4 @@
-package next.jdbc.mysql.query.analyze;
+package next.jdbc.mysql.sql.analyze;
 
 import next.jdbc.mysql.join.Join;
 

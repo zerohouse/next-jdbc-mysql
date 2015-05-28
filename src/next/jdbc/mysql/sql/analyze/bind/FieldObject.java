@@ -1,9 +1,9 @@
-package next.jdbc.mysql.query.analyze.bind;
+package next.jdbc.mysql.sql.analyze.bind;
 
 import java.lang.reflect.Field;
 
-import next.jdbc.mysql.query.analyze.info.FieldInfo;
-import next.jdbc.mysql.query.analyze.info.TableInfo;
+import next.jdbc.mysql.sql.analyze.info.FieldInfo;
+import next.jdbc.mysql.sql.analyze.info.TableInfo;
 
 public class FieldObject {
 

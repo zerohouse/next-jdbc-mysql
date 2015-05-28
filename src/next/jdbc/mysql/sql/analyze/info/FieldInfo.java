@@ -1,4 +1,4 @@
-package next.jdbc.mysql.query.analyze.info;
+package next.jdbc.mysql.sql.analyze.info;
 
 import java.lang.reflect.Field;
 
