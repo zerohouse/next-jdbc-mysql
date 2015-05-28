@@ -10,25 +10,33 @@ public class JoinAnalyzer implements Analyzer {
 	@SuppressWarnings("rawtypes")
 	private Join join;
 
-	public Analyzer getLeft() {
+	public Analyzer getLeftAnalyzer() {
 		return left;
 	}
 
-	public Analyzer getRight() {
+	public Analyzer getRightAnalyzer() {
 		return right;
 	}
 
 	@SuppressWarnings("rawtypes")
 	public JoinAnalyzer(Join join) {
-		left = new ObjectAnalyzer(join.getLeft());
-		left.getNotNullFields().forEach(field -> {
-			field.setJoin(true);
-		});
-		right = new ObjectAnalyzer(join.getRight());
-		right.getNotNullFields().forEach(field -> {
-			field.setJoin(true);
-		});
+		left = analyze(join.getLeft());
+		right = analyze(join.getRight());
 		this.join = join;
+	}
+
+	@SuppressWarnings("rawtypes")
+	private Analyzer analyze(Object object) {
+		Analyzer result;
+		if (Join.class.isAssignableFrom(object.getClass()))
+			result = new JoinAnalyzer((Join) object);
+		else {
+			result = new ObjectAnalyzer(object);
+			result.getAllFields().forEach(field -> {
+				field.setJoin(true);
+			});
+		}
+		return result;
 	}
 
 	@Override
@@ -55,13 +63,13 @@ public class JoinAnalyzer implements Analyzer {
 		return fields;
 	}
 
-	private final static String JOIN_NAME = "%s %s JOIN %s ON %s.%s = %s.%s";
+	private final static String JOIN_NAME = "%s %s JOIN %s ON %s = %s";
 
 	@Override
 	public String getTableName() {
-		return String.format(JOIN_NAME, left.getTableName(), join.getJoinType().getType(), right.getTableName(), left.getTableName(), left
-				.getAllFields().findByFieldName(join.getLeftOnFieldName()).getColumnName(), right.getTableName(), right.getAllFields()
-				.findByFieldName(join.getRightOnFieldName()).getColumnName());
+		return String.format(JOIN_NAME, left.getTableName(), join.getJoinType().getType(), right.getTableName(),
+				left.getAllFields().findByFieldName(join.getLeftOnFieldName()).getColumnName(),
+				right.getAllFields().findByFieldName(join.getRightOnFieldName()).getColumnName());
 	}
 
 	@Override
@@ -70,6 +78,14 @@ public class JoinAnalyzer implements Analyzer {
 		fields.concat(left.getAllFields());
 		fields.concat(right.getAllFields());
 		return fields;
+	}
+
+	public Object getLeft() {
+		return join.getLeft();
+	}
+
+	public Object getRight() {
+		return join.getRight();
 	}
 
 }

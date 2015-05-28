@@ -6,7 +6,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import next.jdbc.mysql.join.JoinSet;
 import next.jdbc.mysql.query.analyze.Analyzer;
+import next.jdbc.mysql.query.analyze.JoinAnalyzer;
 import next.jdbc.mysql.query.analyze.TypeAnalyzer;
 
 import org.slf4j.Logger;
@@ -16,30 +18,28 @@ public class ModelMaker {
 
 	private static final Logger logger = LoggerFactory.getLogger(ModelMaker.class);
 
-	public static Object setByMap(Object object, Map<String, Object> recordMap) {
-		Analyzer analyzer = new TypeAnalyzer(object.getClass());
+	public static <T> T getByMap(Class<T> type, Map<String, Object> recordMap) {
 		if (recordMap == null)
-			return object;
-		analyzer.getAllFields().forEach(fieldObject -> {
-			Object obj = recordMap.get(fieldObject.getColumnName());
-			if (obj == null)
-				return;
-			try {
-				Field field = fieldObject.getField();
-				field.setAccessible(true);
-				field.set(object, obj);
-			} catch (Exception e) {
-				logger.warn(e.getMessage());
-			}
-		});
-		return object;
+			return null;
+		Analyzer analyzer = new TypeAnalyzer(type);
+		return getObjectByMap(type, recordMap, analyzer);
+	}
+
+	@SuppressWarnings("unchecked")
+	public static <T> T getObjectByMap(Class<T> type, Map<String, Object> recordMap, Analyzer analyzer) {
+		if (recordMap == null)
+			return null;
+		T object = newInstance(type);
+		return (T) setByMap(object, recordMap, analyzer);
 	}
 
 	public static Object setByMap(Object object, Map<String, Object> recordMap, Analyzer analyzer) {
 		if (recordMap == null)
-			return object;
+			return null;
+		if (analyzer.getClass().equals(JoinAnalyzer.class))
+			return getJoinSet(recordMap, (JoinAnalyzer) analyzer);
 		analyzer.getAllFields().forEach(fieldObject -> {
-			Object obj = recordMap.get(fieldObject.getColumnName());
+			Object obj = recordMap.get(fieldObject.getColumnName().toLowerCase());
 			if (obj == null)
 				return;
 			try {
@@ -53,7 +53,8 @@ public class ModelMaker {
 		return object;
 	}
 
-	public static Object newInstance(Class<?> type) {
+	@SuppressWarnings("unchecked")
+	private static <T> T newInstance(Class<T> type) {
 		List<Object> params = new ArrayList<Object>();
 		Constructor<?>[] constructors = type.getConstructors();
 		if (constructors.length == 0)
@@ -61,7 +62,7 @@ public class ModelMaker {
 		for (int i = 0; i < constructors.length; i++)
 			if (constructors[i].getParameterTypes().length == 0) {
 				try {
-					return constructors[i].newInstance();
+					return (T) constructors[i].newInstance();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -71,7 +72,7 @@ public class ModelMaker {
 			params.add(getDefaultValue(paramTypes[i]));
 		}
 		try {
-			return type.getConstructors()[0].newInstance(params.toArray());
+			return (T) type.getConstructors()[0].newInstance(params.toArray());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -130,4 +131,11 @@ public class ModelMaker {
 		return null;
 	}
 
+	@SuppressWarnings("unchecked")
+	public static <LEFT, RIGHT> JoinSet<LEFT, RIGHT> getJoinSet(Map<String, Object> recordMap, JoinAnalyzer analyzer) {
+		JoinSet<LEFT, RIGHT> result = new JoinSet<LEFT, RIGHT>(null, null);
+		result.setLeft((LEFT) setByMap(analyzer.getLeft(), recordMap, analyzer.getLeftAnalyzer()));
+		result.setRight((RIGHT) setByMap(analyzer.getRight(), recordMap, analyzer.getRightAnalyzer()));
+		return result;
+	}
 }

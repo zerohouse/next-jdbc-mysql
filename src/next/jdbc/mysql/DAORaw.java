@@ -23,6 +23,8 @@ public class DAORaw {
 
 	private static final Logger logger = LoggerFactory.getLogger(DAORaw.class);
 
+	private static final String DOT = ".";
+
 	private ConnectionManager cm;
 
 	public DAORaw() {
@@ -57,12 +59,13 @@ public class DAORaw {
 			pstmt = getPSTMT(cm, sql, parameters);
 			rs = pstmt.executeQuery();
 			ResultSetMetaData metaData = rs.getMetaData();
-			int columnCount = metaData.getColumnCount();
 			if (!rs.next())
 				return null;
+			int columnCount = metaData.getColumnCount();
 			Map<String, Object> record = new HashMap<String, Object>();
 			for (int i = 1; i <= columnCount; i++) {
-				record.put(metaData.getColumnLabel(i), rs.getObject(i));
+				record.put(metaData.getColumnLabel(i).toLowerCase(), rs.getObject(i));
+				record.put(metaData.getTableName(i) + DOT + metaData.getColumnName(i).toLowerCase(), rs.getObject(i));
 			}
 			return record;
 		} catch (SQLException e) {
@@ -100,7 +103,8 @@ public class DAORaw {
 					result = new ArrayList<Map<String, Object>>();
 				HashMap<String, Object> columns = new HashMap<String, Object>();
 				for (int i = 1; i <= columnCount; i++) {
-					columns.put(metaData.getColumnLabel(i), rs.getObject(i));
+					columns.put(metaData.getColumnLabel(i).toLowerCase(), rs.getObject(i));
+					columns.put(metaData.getTableName(i) + DOT + metaData.getColumnName(i).toLowerCase(), rs.getObject(i));
 				}
 				result.add(columns);
 			}

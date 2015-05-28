@@ -32,6 +32,8 @@ public class FieldObject {
 	private final static String DOT = ".";
 
 	public String getColumnName() {
+		if (join)
+			return tableName + DOT + fieldInfo.getColumnName();
 		return fieldInfo.getColumnName();
 	}
 

@@ -57,10 +57,7 @@ public class DAO extends DAORaw {
 		Map<String, Object> record = getRecord(query.getQueryString(), parameters);
 		if (record == null)
 			return null;
-		@SuppressWarnings("unchecked")
-		T result = (T) ModelMaker.newInstance(type);
-		ModelMaker.setByMap(result, record, analyzer);
-		return result;
+		return ModelMaker.getObjectByMap(type, record, analyzer);
 	}
 
 	/**
@@ -82,10 +79,7 @@ public class DAO extends DAORaw {
 		Map<String, Object> record = getRecord(sql, parameters);
 		if (record == null)
 			return null;
-		@SuppressWarnings("unchecked")
-		T result = (T) ModelMaker.newInstance(type);
-		ModelMaker.setByMap(result, record);
-		return result;
+		return ModelMaker.getByMap(type, record);
 	}
 
 	/**
@@ -102,16 +96,13 @@ public class DAO extends DAORaw {
 	 *            ?에 파싱할 파라미터
 	 * @return T List
 	 */
-	@SuppressWarnings("unchecked")
 	public <T> List<T> getList(Class<T> type, String sql, Object... parameters) {
 		List<Map<String, Object>> records = getRecords(sql, parameters);
 		List<T> result = new ArrayList<T>();
 		if (records == null)
 			return null;
 		records.forEach(record -> {
-			T object = (T) ModelMaker.newInstance(type);
-			ModelMaker.setByMap(object, record);
-			result.add(object);
+			result.add(ModelMaker.getByMap(type, record));
 		});
 		return result;
 	}
@@ -129,14 +120,14 @@ public class DAO extends DAORaw {
 	 *            찾을 object
 	 * @return Object 해당 Object
 	 */
+	@SuppressWarnings("unchecked")
 	public <T> T find(T object) {
 		Analyzer analyzer = new ObjectAnalyzer(object);
 		Query query = maker.select(analyzer);
 		Map<String, Object> recordMap = getRecord(query.getQueryString(), query.getParameterArray());
 		if (recordMap == null)
 			return null;
-		ModelMaker.setByMap(object, recordMap, analyzer);
-		return object;
+		return (T) ModelMaker.setByMap(object, recordMap, analyzer);
 	}
 
 	/**
@@ -156,9 +147,7 @@ public class DAO extends DAORaw {
 		JoinAnalyzer analyzer = new JoinAnalyzer(join);
 		Query query = maker.select(analyzer);
 		Map<String, Object> recordMap = getRecord(query.getQueryString(), query.getParameterArray());
-		ModelMaker.setByMap(join.getLeft(), recordMap, analyzer.getLeft());
-		ModelMaker.setByMap(join.getRight(), recordMap, analyzer.getRight());
-		return new JoinSet<LEFT, RIGHT>(join.getLeft(), join.getRight());
+		return ModelMaker.getJoinSet(recordMap, analyzer);
 	}
 
 	/**
@@ -217,18 +206,13 @@ public class DAO extends DAORaw {
 	 *            조건 오브젝트
 	 * @return JoinSet join된 left, right
 	 */
-	@SuppressWarnings("unchecked")
 	public <LEFT, RIGHT> List<JoinSet<LEFT, RIGHT>> findList(Join<LEFT, RIGHT> join) {
 		JoinAnalyzer analyzer = new JoinAnalyzer(join);
 		Query query = maker.select(analyzer);
 		List<JoinSet<LEFT, RIGHT>> result = new ArrayList<JoinSet<LEFT, RIGHT>>();
 		List<Map<String, Object>> recordMap = getRecords(query.getQueryString(), query.getParameterArray());
 		recordMap.forEach(map -> {
-			Object left = ModelMaker.newInstance(join.getLeft().getClass());
-			Object right = ModelMaker.newInstance(join.getRight().getClass());
-			ModelMaker.setByMap(left, map, analyzer.getLeft());
-			ModelMaker.setByMap(right, map, analyzer.getRight());
-			result.add(new JoinSet<LEFT, RIGHT>((LEFT) left, (RIGHT) right));
+			result.add(ModelMaker.getJoinSet(map, analyzer));
 		});
 		return result;
 	}
@@ -249,7 +233,6 @@ public class DAO extends DAORaw {
 	 *            ex)"order by User_id limit 0,3"
 	 * @return JoinSet join된 left, right
 	 */
-	@SuppressWarnings("unchecked")
 	public <LEFT, RIGHT> List<JoinSet<LEFT, RIGHT>> findList(Join<LEFT, RIGHT> join, String additionalCondition) {
 		JoinAnalyzer analyzer = new JoinAnalyzer(join);
 		Query query = maker.select(analyzer);
@@ -258,11 +241,7 @@ public class DAO extends DAORaw {
 		List<JoinSet<LEFT, RIGHT>> result = new ArrayList<JoinSet<LEFT, RIGHT>>();
 		List<Map<String, Object>> recordMap = getRecords(query.getQueryString(), query.getParameterArray());
 		recordMap.forEach(map -> {
-			Object left = ModelMaker.newInstance(join.getLeft().getClass());
-			Object right = ModelMaker.newInstance(join.getRight().getClass());
-			ModelMaker.setByMap(left, map, analyzer.getLeft());
-			ModelMaker.setByMap(right, map, analyzer.getRight());
-			result.add(new JoinSet<LEFT, RIGHT>((LEFT) left, (RIGHT) right));
+			result.add(ModelMaker.getJoinSet(map, analyzer));
 		});
 		return result;
 	}

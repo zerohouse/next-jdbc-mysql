@@ -42,7 +42,13 @@ public class Fields {
 	}
 
 	public FieldObject findByFieldName(String fieldName) {
-		return fields.stream().filter(field -> field.getField().getName().equals(fieldName)).findFirst().get();
+		if (!fieldName.contains("."))
+			return fields.stream().filter(field -> field.getField().getName().equals(fieldName)).findFirst().get();
+		String[] name = fieldName.split("\\.");
+		return fields
+				.stream()
+				.filter(field -> field.getField().getName().equals(name[name.length - 1])
+						&& field.getField().getDeclaringClass().getSimpleName().equals(name[name.length - 2])).findFirst().get();
 	}
 
 	public void add(FieldObject fieldObject) {
