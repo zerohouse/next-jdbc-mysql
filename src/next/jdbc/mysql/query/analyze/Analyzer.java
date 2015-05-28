@@ -1,17 +1,33 @@
 package next.jdbc.mysql.query.analyze;
 
+import next.jdbc.mysql.join.Join;
 import next.jdbc.mysql.query.analyze.bind.Fields;
 
 public interface Analyzer {
 
+	public static <T> Analyzer getAnalyzer(Class<T> type) {
+		if (Join.class.isAssignableFrom(type))
+			return new JoinTypeAnalyzer(type);
+		return new TypeAnalyzer(type);
+	}
+
+	@SuppressWarnings("rawtypes")
+	public static Analyzer getObjectAnalyzer(Object object) {
+		if (Join.class.isAssignableFrom(object.getClass()))
+			return new JoinAnalyzer((Join) object);
+		return new ObjectAnalyzer(object);
+	}
+
+	Fields getNotNullAllFields();
+
 	Fields getNotNullFields();
+
+	Fields getNotNullKeyFields();
+
+	Fields getAllFields();
 
 	String getTableName();
 
-	Fields getFields();
-
-	Fields getKeyFields();
-
-	Fields getAllFields();
+	void setKeyParameters(Object[] parameters);
 
 }

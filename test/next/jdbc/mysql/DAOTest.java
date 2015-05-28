@@ -1,6 +1,7 @@
 package next.jdbc.mysql;
 
 import static org.junit.Assert.*;
+
 import next.jdbc.mysql.example.model.Message;
 import next.jdbc.mysql.example.model.User;
 import next.jdbc.mysql.example.model.join.UserMessage;
@@ -39,14 +40,22 @@ public class DAOTest {
 
 	@Test
 	public void join() {
-		UserMessage m = new UserMessage(new User("mail@mail.com"), new Message());
-		assertNotNull(dao.findList(m));
 		User user = new User();
-		user.setId(1);
-		assertEquals(100, dao.findList(new UserMessage(user, new Message())).size());
+		user.setId(3);
+		user.setName("testttttt");
+		Message message = new Message();
+		message.setId(3);
+		message.setHead("testtttt");
+		UserMessage m = new UserMessage(user, message);
+		System.out.println(dao.update(m));
 
 	}
 
+	@Test
+	public void joins() {
+		System.out.println(dao.getList(UserMessage.class, "SELECT * FROM User LEFT JOIN Message ON User.id = Message.from WHERE User.`id`=?", 1));
+
+	}
 	// @Test
 	// public void joins() {
 	// JoinSet<User, Message> set = dao.find(new UserMessage(new User(), new

@@ -3,6 +3,7 @@ package next.jdbc.mysql.query.analyze.bind;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 import next.jdbc.mysql.query.Query;
 
@@ -12,6 +13,10 @@ public class Fields {
 
 	public Fields() {
 		fields = new ArrayList<FieldObject>();
+	}
+
+	public Fields(List<FieldObject> fields) {
+		this.fields = fields;
 	}
 
 	public Query getQuery(String suffix, String delimiter) {
@@ -61,5 +66,13 @@ public class Fields {
 
 	public void forEach(Consumer<? super FieldObject> action) {
 		fields.forEach(action);
+	}
+
+	public Stream<FieldObject> stream() {
+		return fields.stream();
+	}
+
+	public FieldObject get(int i) {
+		return fields.get(i);
 	}
 }

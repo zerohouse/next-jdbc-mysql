@@ -51,4 +51,8 @@ public class FieldObject {
 		this.join = join;
 	}
 
+	public void setObject(Object object) {
+		this.object = object;
+	}
+
 }

@@ -25,7 +25,7 @@ public class DAORaw {
 
 	private static final String DOT = ".";
 
-	private ConnectionManager cm;
+	protected ConnectionManager cm;
 
 	public DAORaw() {
 	}

@@ -6,10 +6,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import next.jdbc.mysql.join.JoinSet;
+import next.jdbc.mysql.join.Join;
 import next.jdbc.mysql.query.analyze.Analyzer;
-import next.jdbc.mysql.query.analyze.JoinAnalyzer;
-import next.jdbc.mysql.query.analyze.TypeAnalyzer;
+import next.jdbc.mysql.query.analyze.JoinTypeAnalyzer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +20,7 @@ public class ModelMaker {
 	public static <T> T getByMap(Class<T> type, Map<String, Object> recordMap) {
 		if (recordMap == null)
 			return null;
-		Analyzer analyzer = new TypeAnalyzer(type);
+		Analyzer analyzer = Analyzer.getAnalyzer(type);
 		return getObjectByMap(type, recordMap, analyzer);
 	}
 
@@ -29,15 +28,17 @@ public class ModelMaker {
 	public static <T> T getObjectByMap(Class<T> type, Map<String, Object> recordMap, Analyzer analyzer) {
 		if (recordMap == null)
 			return null;
-		T object = newInstance(type);
-		return (T) setByMap(object, recordMap, analyzer);
+		return (T) setByMap(type, null, recordMap, analyzer);
 	}
 
-	public static Object setByMap(Object object, Map<String, Object> recordMap, Analyzer analyzer) {
+	public static Object setByMap(Class<?> type, Object object, Map<String, Object> recordMap, Analyzer analyzer) {
 		if (recordMap == null)
 			return null;
-		if (analyzer.getClass().equals(JoinAnalyzer.class))
-			return getJoinSet(recordMap, (JoinAnalyzer) analyzer);
+		if (Join.class.isAssignableFrom(type))
+			return getJoinSet(recordMap, (JoinTypeAnalyzer) analyzer);
+		if (object == null)
+			object = newInstance(type);
+		Object result = object;
 		analyzer.getAllFields().forEach(fieldObject -> {
 			Object obj = recordMap.get(fieldObject.getColumnName().toLowerCase());
 			if (obj == null)
@@ -45,7 +46,7 @@ public class ModelMaker {
 			try {
 				Field field = fieldObject.getField();
 				field.setAccessible(true);
-				field.set(object, obj);
+				field.set(result, obj);
 			} catch (Exception e) {
 				logger.warn(e.getMessage());
 			}
@@ -54,7 +55,7 @@ public class ModelMaker {
 	}
 
 	@SuppressWarnings("unchecked")
-	private static <T> T newInstance(Class<T> type) {
+	public static <T> T newInstance(Class<T> type) {
 		List<Object> params = new ArrayList<Object>();
 		Constructor<?>[] constructors = type.getConstructors();
 		if (constructors.length == 0)
@@ -132,10 +133,10 @@ public class ModelMaker {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <LEFT, RIGHT> JoinSet<LEFT, RIGHT> getJoinSet(Map<String, Object> recordMap, JoinAnalyzer analyzer) {
-		JoinSet<LEFT, RIGHT> result = new JoinSet<LEFT, RIGHT>(null, null);
-		result.setLeft((LEFT) setByMap(analyzer.getLeft(), recordMap, analyzer.getLeftAnalyzer()));
-		result.setRight((RIGHT) setByMap(analyzer.getRight(), recordMap, analyzer.getRightAnalyzer()));
-		return result;
+	public static <LEFT, RIGHT> Join<LEFT, RIGHT> getJoinSet(Map<String, Object> recordMap, JoinTypeAnalyzer analyzer) {
+		Join<LEFT, RIGHT> join = analyzer.getJoin();
+		join.setLeft((LEFT) setByMap(analyzer.getLeftType(), join.getLeft(), recordMap, analyzer.getLeftAnalyzer()));
+		join.setRight((RIGHT) setByMap(analyzer.getRightType(), join.getRight(), recordMap, analyzer.getRightAnalyzer()));
+		return join;
 	}
 }

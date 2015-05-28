@@ -5,13 +5,10 @@ import java.util.List;
 import java.util.Map;
 
 import next.jdbc.mysql.join.Join;
-import next.jdbc.mysql.join.JoinSet;
 import next.jdbc.mysql.query.Query;
 import next.jdbc.mysql.query.QueryMaker;
 import next.jdbc.mysql.query.analyze.Analyzer;
-import next.jdbc.mysql.query.analyze.JoinAnalyzer;
 import next.jdbc.mysql.query.analyze.ObjectAnalyzer;
-import next.jdbc.mysql.query.analyze.TypeAnalyzer;
 import next.jdbc.mysql.query.analyze.bind.ModelMaker;
 
 /**
@@ -52,9 +49,10 @@ public class DAO extends DAORaw {
 	 * @return T
 	 */
 	public <T> T get(Class<T> type, Object... parameters) {
-		Analyzer analyzer = new TypeAnalyzer(type);
+		Analyzer analyzer = Analyzer.getAnalyzer(type);
+		analyzer.setKeyParameters(parameters);
 		Query query = maker.select(analyzer);
-		Map<String, Object> record = getRecord(query.getQueryString(), parameters);
+		Map<String, Object> record = getRecord(query.getQueryString(), query.getParameterArray());
 		if (record == null)
 			return null;
 		return ModelMaker.getObjectByMap(type, record, analyzer);
@@ -122,32 +120,12 @@ public class DAO extends DAORaw {
 	 */
 	@SuppressWarnings("unchecked")
 	public <T> T find(T object) {
-		Analyzer analyzer = new ObjectAnalyzer(object);
+		Analyzer analyzer = Analyzer.getObjectAnalyzer(object);
 		Query query = maker.select(analyzer);
 		Map<String, Object> recordMap = getRecord(query.getQueryString(), query.getParameterArray());
 		if (recordMap == null)
 			return null;
-		return (T) ModelMaker.setByMap(object, recordMap, analyzer);
-	}
-
-	/**
-	 * Object와 조건이 맞는 조인 레코드를 찾습니다.<br>
-	 * <br>
-	 * <p>
-	 *
-	 * @param <LEFT>
-	 *            Type1
-	 * @param <RIGHT>
-	 *            Type2
-	 * @param join
-	 *            조건 오브젝트
-	 * @return Join join된 left, right
-	 */
-	public <LEFT, RIGHT> JoinSet<LEFT, RIGHT> find(Join<LEFT, RIGHT> join) {
-		JoinAnalyzer analyzer = new JoinAnalyzer(join);
-		Query query = maker.select(analyzer);
-		Map<String, Object> recordMap = getRecord(query.getQueryString(), query.getParameterArray());
-		return ModelMaker.getJoinSet(recordMap, analyzer);
+		return (T) ModelMaker.setByMap(object.getClass(), object, recordMap, analyzer);
 	}
 
 	/**
@@ -165,7 +143,8 @@ public class DAO extends DAORaw {
 	 */
 	@SuppressWarnings("unchecked")
 	public <T> List<T> findList(T object) {
-		Query query = maker.select(new ObjectAnalyzer(object));
+		Analyzer analyzer = Analyzer.getObjectAnalyzer(object);
+		Query query = maker.select(analyzer);
 		return (List<T>) getList(object.getClass(), query.getQueryString(), query.getParameterArray());
 	}
 
@@ -187,63 +166,11 @@ public class DAO extends DAORaw {
 	 */
 	@SuppressWarnings("unchecked")
 	public <T> List<T> findList(T object, String additionalCondition) {
-		Query query = maker.select(new ObjectAnalyzer(object));
+		Analyzer analyzer = Analyzer.getObjectAnalyzer(object);
+		Query query = maker.select(analyzer);
 		query.append(" ");
 		query.append(additionalCondition);
 		return (List<T>) getList(object.getClass(), query.getQueryString(), query.getParameterArray());
-	}
-
-	/**
-	 * Object와 조건이 맞는 조인 레코드를 찾습니다.<br>
-	 * <br>
-	 * <p>
-	 * 
-	 * @param <LEFT>
-	 *            LeftType
-	 * @param <RIGHT>
-	 *            RightType
-	 * @param join
-	 *            조건 오브젝트
-	 * @return JoinSet join된 left, right
-	 */
-	public <LEFT, RIGHT> List<JoinSet<LEFT, RIGHT>> findList(Join<LEFT, RIGHT> join) {
-		JoinAnalyzer analyzer = new JoinAnalyzer(join);
-		Query query = maker.select(analyzer);
-		List<JoinSet<LEFT, RIGHT>> result = new ArrayList<JoinSet<LEFT, RIGHT>>();
-		List<Map<String, Object>> recordMap = getRecords(query.getQueryString(), query.getParameterArray());
-		recordMap.forEach(map -> {
-			result.add(ModelMaker.getJoinSet(map, analyzer));
-		});
-		return result;
-	}
-
-	/**
-	 * Object와 조건이 맞는 조인 레코드를 찾습니다.<br>
-	 * <br>
-	 * <p>
-	 * 
-	 * @param <LEFT>
-	 *            LeftType
-	 * @param <RIGHT>
-	 *            RightType
-	 * @param join
-	 *            조건 오브젝트
-	 * @param additionalCondition
-	 *            page, limit, orderBy 등의 조건을 정의합니다.
-	 *            ex)"order by User_id limit 0,3"
-	 * @return JoinSet join된 left, right
-	 */
-	public <LEFT, RIGHT> List<JoinSet<LEFT, RIGHT>> findList(Join<LEFT, RIGHT> join, String additionalCondition) {
-		JoinAnalyzer analyzer = new JoinAnalyzer(join);
-		Query query = maker.select(analyzer);
-		query.append(" ");
-		query.append(additionalCondition);
-		List<JoinSet<LEFT, RIGHT>> result = new ArrayList<JoinSet<LEFT, RIGHT>>();
-		List<Map<String, Object>> recordMap = getRecords(query.getQueryString(), query.getParameterArray());
-		recordMap.forEach(map -> {
-			result.add(ModelMaker.getJoinSet(map, analyzer));
-		});
-		return result;
 	}
 
 	/**
@@ -255,6 +182,11 @@ public class DAO extends DAORaw {
 	 * @return boolean 실행결과
 	 */
 	public boolean insert(Object object) {
+		if (Join.class.isAssignableFrom(object.getClass())) {
+			@SuppressWarnings("rawtypes")
+			Join join = (Join) object;
+			return insert(join.getLeft()) && insert(join.getRight());
+		}
 		Query query = maker.insert(new ObjectAnalyzer(object));
 		return execute(query);
 	}
@@ -268,6 +200,11 @@ public class DAO extends DAORaw {
 	 * @return boolean 실행결과
 	 */
 	public boolean insertIfExistUpdate(Object object) {
+		if (Join.class.isAssignableFrom(object.getClass())) {
+			@SuppressWarnings("rawtypes")
+			Join join = (Join) object;
+			return insertIfExistUpdate(join.getLeft()) && insertIfExistUpdate(join.getRight());
+		}
 		Query query = maker.insertIfExistUpdate(new ObjectAnalyzer(object));
 		return execute(query);
 	}
@@ -281,6 +218,11 @@ public class DAO extends DAORaw {
 	 * @return boolean 실행결과
 	 */
 	public boolean update(Object object) {
+		if (Join.class.isAssignableFrom(object.getClass())) {
+			@SuppressWarnings("rawtypes")
+			Join join = (Join) object;
+			return update(join.getLeft()) && update(join.getRight());
+		}
 		Query query = maker.update(new ObjectAnalyzer(object));
 		return execute(query);
 	}
@@ -296,6 +238,11 @@ public class DAO extends DAORaw {
 	 * @return boolean 실행결과
 	 */
 	public boolean update(Object object, String... keyFieldNames) {
+		if (Join.class.isAssignableFrom(object.getClass())) {
+			@SuppressWarnings("rawtypes")
+			Join join = (Join) object;
+			return update(join.getLeft(), keyFieldNames) && update(join.getRight(), keyFieldNames);
+		}
 		Query query = maker.update(new ObjectAnalyzer(object), keyFieldNames);
 		return execute(query);
 	}
@@ -309,6 +256,11 @@ public class DAO extends DAORaw {
 	 * @return boolean 실행결과
 	 */
 	public boolean delete(Object object) {
+		if (Join.class.isAssignableFrom(object.getClass())) {
+			@SuppressWarnings("rawtypes")
+			Join join = (Join) object;
+			return delete(join.getLeft()) && delete(join.getRight());
+		}
 		Query query = maker.delete(new ObjectAnalyzer(object));
 		return execute(query);
 	}

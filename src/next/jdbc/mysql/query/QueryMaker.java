@@ -19,18 +19,18 @@ public class QueryMaker {
 	private static final String DELETE = "DELETE FROM %s WHERE %s";
 
 	public Query select(Analyzer analyzer) {
-		Query result = analyzer.getNotNullFields().getQuery(EQ, AND);
+		Query result = analyzer.getNotNullAllFields().getQuery(EQ, AND);
 		return result.setQuery(String.format(SELECT, ASTAR, analyzer.getTableName(), result.getQueryString()));
 	}
 
 	public Query insert(Analyzer analyzer) {
-		Query result = analyzer.getNotNullFields().getQuery("", COMMA);
+		Query result = analyzer.getNotNullAllFields().getQuery("", COMMA);
 		return result.setQuery(String.format(INSERT, analyzer.getTableName(), result.getQueryString(), makeQ(result.size())));
 	}
 
 	public Query update(Analyzer analyzer) {
-		Query fields = analyzer.getFields().getQuery(EQ, COMMA);
-		Query keys = analyzer.getKeyFields().getQuery(EQ, AND);
+		Query fields = analyzer.getNotNullFields().getQuery(EQ, COMMA);
+		Query keys = analyzer.getNotNullKeyFields().getQuery(EQ, AND);
 		Query query = new Query();
 		query.concatParameters(fields);
 		query.concatParameters(keys);
@@ -41,7 +41,7 @@ public class QueryMaker {
 		Fields update = new Fields();
 		Fields key = new Fields();
 		List<String> keyFields = Arrays.asList(keyFieldName);
-		analyzer.getNotNullFields().forEach(field -> {
+		analyzer.getNotNullAllFields().forEach(field -> {
 			if (keyFields.contains(field.getField().getName())) {
 				key.add(field);
 				return;
@@ -57,7 +57,7 @@ public class QueryMaker {
 	}
 
 	public Query delete(Analyzer analyzer) {
-		Query result = analyzer.getNotNullFields().getQuery(EQ, AND);
+		Query result = analyzer.getNotNullAllFields().getQuery(EQ, AND);
 		return result.setQuery(String.format(DELETE, analyzer.getTableName(), result.getQueryString()));
 	}
 
@@ -66,8 +66,8 @@ public class QueryMaker {
 	private final static String INSERT_IF_EXISTS_UPDATE = "INSERT INTO %s (%s) VALUES (%s) ON DUPLICATE KEY UPDATE %s";
 
 	public Query insertIfExistUpdate(Analyzer analyzer) {
-		Query notNullfields = analyzer.getNotNullFields().getQuery("", COMMA);
-		Query fields = analyzer.getFields().getQuery(EQ, COMMA);
+		Query notNullfields = analyzer.getNotNullAllFields().getQuery("", COMMA);
+		Query fields = analyzer.getNotNullFields().getQuery(EQ, COMMA);
 		Query query = new Query();
 		query.concatParameters(notNullfields);
 		query.concatParameters(fields);
