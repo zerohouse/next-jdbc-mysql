@@ -151,4 +151,8 @@ public class User {
 			this.cover = cover;
 	}
 
+	public void removePassword() {
+		this.password = null;
+	}
+
 }

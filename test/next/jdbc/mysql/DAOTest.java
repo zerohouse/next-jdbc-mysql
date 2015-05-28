@@ -44,6 +44,16 @@ public class DAOTest {
 		User user = new User();
 		user.setId(1);
 		assertEquals(100, dao.findList(new UserMessage(user, new Message())).size());
+
 	}
+
+	// @Test
+	// public void joins() {
+	// JoinSet<User, Message> set = dao.find(new UserMessage(new User(), new
+	// Message()));
+	// User user = set.getLeft();
+	// user.removePassword();
+	// Message message = set.getRight();
+	// }
 
 }
