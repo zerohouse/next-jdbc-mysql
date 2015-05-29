@@ -31,7 +31,7 @@ public class TableMaker {
 	}
 
 	public String createQuery() {
-		return String.format(CREATE_TABLE, wrapped(analyzer.getTableName()), getColumnString(), Setting.getCreateOption().getTable_suffix());
+		return String.format(CREATE_TABLE, analyzer.getTableName(), getColumnString(), Setting.getCreateOption().getTable_suffix());
 	}
 
 	private static final String DROP_TABLE = "DROP TABLE IF EXISTS %s";
@@ -43,7 +43,7 @@ public class TableMaker {
 	}
 
 	public String dropQuery() {
-		return String.format(DROP_TABLE, wrapped(analyzer.getTableName()));
+		return String.format(DROP_TABLE, analyzer.getTableName());
 	}
 
 	public void reset() {
@@ -53,12 +53,6 @@ public class TableMaker {
 
 	private static final String PRIMARY_KEY = "PRIMARY KEY";
 	private Map<String, SqlFunction> functions = new HashMap<String, SqlFunction>();
-
-	private static final String Q = "`";
-
-	private Object wrapped(String tableName) {
-		return Q + tableName + Q;
-	}
 
 	private String getColumnString() {
 		Field[] fields = type.getDeclaredFields();

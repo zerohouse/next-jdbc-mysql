@@ -33,7 +33,7 @@ public class DAOTest {
 		assertEquals("password", dao.find(new User("mail@mail.com")).getPassword());
 		User user = dao.find(new User("mail@mail.com"));
 		user.setGender("F");
-		assertTrue(dao.update(user));
+		assertTrue(dao.update(user, "email"));
 		assertEquals("F", dao.find(new User("mail@mail.com")).getGender());
 		assertEquals(1, dao.findList(new User("mail@mail.com")).size());
 	}

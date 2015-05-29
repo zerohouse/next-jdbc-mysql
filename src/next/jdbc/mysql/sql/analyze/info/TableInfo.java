@@ -21,8 +21,10 @@ public class TableInfo {
 	private Boolean neverDrop;
 	private String createQuery;
 
+	private final static String Q = "`";
+
 	public String getTableName() {
-		return tableName;
+		return Q + tableName + Q;
 	}
 
 	public void setTableName(String tableName) {
