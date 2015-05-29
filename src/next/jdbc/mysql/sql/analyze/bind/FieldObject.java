@@ -2,6 +2,8 @@ package next.jdbc.mysql.sql.analyze.bind;
 
 import java.lang.reflect.Field;
 
+import next.jdbc.mysql.annotation.RegularExpression;
+import next.jdbc.mysql.exception.RegexNotMatchedException;
 import next.jdbc.mysql.sql.analyze.info.FieldInfo;
 import next.jdbc.mysql.sql.analyze.info.TableInfo;
 
@@ -12,8 +14,13 @@ public class FieldObject {
 	private Field field;
 
 	public FieldObject(Object object, Field field, TableInfo info) {
-		this.object = object;
 		this.field = field;
+		if (field.isAnnotationPresent(RegularExpression.class)) {
+			if (!object.toString().matches(field.getDeclaredAnnotation(RegularExpression.class).value()))
+				throw new RegexNotMatchedException();
+		}
+
+		this.object = object;
 		this.fieldInfo = new FieldInfo(info, field);
 	}
 
