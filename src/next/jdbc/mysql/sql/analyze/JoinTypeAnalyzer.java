@@ -32,7 +32,7 @@ public class JoinTypeAnalyzer implements Analyzer {
 	public JoinTypeAnalyzer() {
 	}
 
-	private void defineGenerics(Class<?> type) {
+	protected void defineGenerics(Class<?> type) {
 		this.leftType = (Class<?>) ((ParameterizedType) type.getGenericSuperclass()).getActualTypeArguments()[0];
 		this.rightType = (Class<?>) ((ParameterizedType) type.getGenericSuperclass()).getActualTypeArguments()[1];
 	}
