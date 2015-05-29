@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import next.jdbc.mysql.constants.Constants;
 import next.jdbc.mysql.join.Join;
 import next.jdbc.mysql.sql.analyze.Analyzer;
 import next.jdbc.mysql.sql.analyze.JoinTypeAnalyzer;
@@ -41,7 +40,7 @@ public class ModelMaker {
 			object = newInstance(type);
 		Object result = object;
 		analyzer.getAllFields().forEach(fieldObject -> {
-			Object obj = recordMap.get(analyzer.getTableName().toLowerCase() + Constants.DOT + fieldObject.getColumnName().toLowerCase());
+			Object obj = recordMap.get(fieldObject.getColumnName().toLowerCase());
 			if (obj == null)
 				return;
 			try {

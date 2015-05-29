@@ -10,7 +10,6 @@ public class FieldObject {
 	private Object object;
 	private FieldInfo fieldInfo;
 	private Field field;
-	private boolean join;
 	private String tableName;
 
 	public FieldObject(Object object, Field field, TableInfo info) {
@@ -31,17 +30,11 @@ public class FieldObject {
 	private final static String DOT = ".";
 
 	public String getColumnName() {
-		if (join)
-			return tableName + DOT + fieldInfo.getColumnName();
-		return fieldInfo.getColumnName();
+		return tableName + DOT + fieldInfo.getColumnName();
 	}
 
 	public Field getField() {
 		return field;
-	}
-
-	public void setJoin(boolean join) {
-		this.join = join;
 	}
 
 	public void setObject(Object object) {

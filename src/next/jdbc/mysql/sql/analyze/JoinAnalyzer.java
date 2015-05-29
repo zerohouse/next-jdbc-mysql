@@ -9,23 +9,9 @@ public class JoinAnalyzer extends JoinTypeAnalyzer {
 		super();
 		leftType = join.getLeft().getClass();
 		rightType = join.getRight().getClass();
-		left = analyze(join.getLeft());
-		right = analyze(join.getRight());
+		left = Analyzer.getObjectAnalyzer(join.getLeft());
+		right = Analyzer.getObjectAnalyzer(join.getRight());
 		this.join = join;
-	}
-
-	@SuppressWarnings("rawtypes")
-	private Analyzer analyze(Object object) {
-		Analyzer result;
-		if (Join.class.isAssignableFrom(object.getClass()))
-			result = new JoinAnalyzer((Join) object);
-		else {
-			result = new ObjectAnalyzer(object);
-			result.getAllFields().forEach(field -> {
-				field.setJoin(true);
-			});
-		}
-		return result;
 	}
 
 }

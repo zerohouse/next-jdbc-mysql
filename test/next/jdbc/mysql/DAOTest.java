@@ -1,10 +1,12 @@
 package next.jdbc.mysql;
 
-import static org.junit.Assert.*;
-
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import next.jdbc.mysql.example.model.Message;
 import next.jdbc.mysql.example.model.User;
 import next.jdbc.mysql.example.model.join.UserMessage;
+import next.jdbc.mysql.example.model.join.UserMessageAnswer;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -53,16 +55,7 @@ public class DAOTest {
 
 	@Test
 	public void joins() {
-		System.out.println(dao.getList(UserMessage.class, "SELECT * FROM User LEFT JOIN Message ON User.id = Message.from WHERE User.`id`=?", 1));
-
+		System.out.println(dao.get(UserMessageAnswer.class));
 	}
-	// @Test
-	// public void joins() {
-	// JoinSet<User, Message> set = dao.find(new UserMessage(new User(), new
-	// Message()));
-	// User user = set.getLeft();
-	// user.removePassword();
-	// Message message = set.getRight();
-	// }
 
 }

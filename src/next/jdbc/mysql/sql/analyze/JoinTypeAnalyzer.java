@@ -64,13 +64,13 @@ public class JoinTypeAnalyzer implements Analyzer {
 		return fields;
 	}
 
-	private final static String JOIN_NAME = "%s %s JOIN %s ON %s = %s";
+	private final static String JOIN = "(%s) %s JOIN (%s) ON %s = %s";
 
 	@Override
 	public String getTableName() {
-		return String.format(JOIN_NAME, left.getTableName(), join.getJoinType().getType(), right.getTableName(), left.getAllFields()
-				.findByFieldName(join.getLeftOnFieldName()).getColumnName(), right.getAllFields().findByFieldName(join.getRightOnFieldName())
-				.getColumnName());
+		return String.format(JOIN, left.getTableName(), join.getJoinType().getType(), right.getTableName(),
+				left.getAllFields().findByFieldName(join.getLeftOnFieldName()).getColumnName(),
+				right.getAllFields().findByFieldName(join.getRightOnFieldName()).getColumnName());
 	}
 
 	@Override
