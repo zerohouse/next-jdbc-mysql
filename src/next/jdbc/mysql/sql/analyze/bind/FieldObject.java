@@ -15,13 +15,18 @@ public class FieldObject {
 
 	public FieldObject(Object object, Field field, TableInfo info) {
 		this.field = field;
+		this.object = object;
+		this.fieldInfo = new FieldInfo(info, field);
+		regexCheck(object);
+	}
+
+	private void regexCheck(Object object) {
+		if (object == null)
+			return;
 		if (field.isAnnotationPresent(RegularExpression.class)) {
 			if (!object.toString().matches(field.getDeclaredAnnotation(RegularExpression.class).value()))
 				throw new RegexNotMatchedException();
 		}
-
-		this.object = object;
-		this.fieldInfo = new FieldInfo(info, field);
 	}
 
 	public Object getObject() {
@@ -41,6 +46,7 @@ public class FieldObject {
 	}
 
 	public void setObject(Object object) {
+		regexCheck(object);
 		this.object = object;
 	}
 
