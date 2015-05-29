@@ -54,13 +54,7 @@ public class TypeAnalyzer implements Analyzer {
 		return result;
 	}
 
-	private static final String Q = "`";
-
 	@Override
-	public String getFinalTableName() {
-		return Q + tableInfo.getTableName() + Q;
-	}
-
 	public String getTableName() {
 		return tableInfo.getTableName();
 	}

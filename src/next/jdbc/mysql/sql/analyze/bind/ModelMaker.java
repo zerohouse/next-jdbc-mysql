@@ -10,7 +10,6 @@ import next.jdbc.mysql.constants.Constants;
 import next.jdbc.mysql.join.Join;
 import next.jdbc.mysql.sql.analyze.Analyzer;
 import next.jdbc.mysql.sql.analyze.JoinTypeAnalyzer;
-import next.jdbc.mysql.sql.analyze.TypeAnalyzer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,7 +41,7 @@ public class ModelMaker {
 			object = newInstance(type);
 		Object result = object;
 		analyzer.getAllFields().forEach(fieldObject -> {
-			Object obj = recordMap.get(((TypeAnalyzer) analyzer).getTableName() + Constants.DOT + fieldObject.getColumnName().toLowerCase());
+			Object obj = recordMap.get(analyzer.getTableName().toLowerCase() + Constants.DOT + fieldObject.getColumnName().toLowerCase());
 			if (obj == null)
 				return;
 			try {

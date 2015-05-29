@@ -67,8 +67,8 @@ public class JoinTypeAnalyzer implements Analyzer {
 	private final static String JOIN_NAME = "%s %s JOIN %s ON %s = %s";
 
 	@Override
-	public String getFinalTableName() {
-		return String.format(JOIN_NAME, left.getFinalTableName(), join.getJoinType().getType(), right.getFinalTableName(), left.getAllFields()
+	public String getTableName() {
+		return String.format(JOIN_NAME, left.getTableName(), join.getJoinType().getType(), right.getTableName(), left.getAllFields()
 				.findByFieldName(join.getLeftOnFieldName()).getColumnName(), right.getAllFields().findByFieldName(join.getRightOnFieldName())
 				.getColumnName());
 	}

@@ -107,7 +107,8 @@ public class DAORaw {
 				HashMap<String, Object> columns = new HashMap<String, Object>();
 				for (int i = 1; i <= columnCount; i++) {
 					columns.put(metaData.getColumnLabel(i).toLowerCase(), rs.getObject(i));
-					columns.put(metaData.getTableName(i) + DOT + metaData.getColumnName(i).toLowerCase(), rs.getObject(i));
+					columns.put(Constants.wrapped(metaData.getTableName(i)) + DOT + Constants.wrapped(metaData.getColumnName(i)).toLowerCase(),
+							rs.getObject(i));
 				}
 				result.add(columns);
 			}

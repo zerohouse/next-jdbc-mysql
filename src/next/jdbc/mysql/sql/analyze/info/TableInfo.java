@@ -26,10 +26,6 @@ public class TableInfo {
 		return Constants.wrapped(tableName);
 	}
 
-	public void setTableName(String tableName) {
-		this.tableName = tableName;
-	}
-
 	public String getColumnPrefix() {
 		return columnPrefix;
 	}
