@@ -10,13 +10,11 @@ public class FieldObject {
 	private Object object;
 	private FieldInfo fieldInfo;
 	private Field field;
-	private String tableName;
 
 	public FieldObject(Object object, Field field, TableInfo info) {
 		this.object = object;
 		this.field = field;
-		this.tableName = info.getTableName();
-		this.fieldInfo = new FieldInfo(info.getColumnPrefix(), info.getColumnSuffix(), field);
+		this.fieldInfo = new FieldInfo(info, field);
 	}
 
 	public Object getObject() {
@@ -27,10 +25,8 @@ public class FieldObject {
 		return fieldInfo;
 	}
 
-	private final static String DOT = ".";
-
 	public String getColumnName() {
-		return tableName + DOT + fieldInfo.getColumnName();
+		return fieldInfo.getColumnName();
 	}
 
 	public Field getField() {
