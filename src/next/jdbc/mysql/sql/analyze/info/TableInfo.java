@@ -1,6 +1,7 @@
 package next.jdbc.mysql.sql.analyze.info;
 
 import next.jdbc.mysql.annotation.Table;
+import next.jdbc.mysql.constants.Constants;
 
 public class TableInfo {
 
@@ -21,10 +22,8 @@ public class TableInfo {
 	private Boolean neverDrop;
 	private String createQuery;
 
-	private final static String Q = "`";
-
 	public String getTableName() {
-		return Q + tableName + Q;
+		return Constants.wrapped(tableName);
 	}
 
 	public void setTableName(String tableName) {

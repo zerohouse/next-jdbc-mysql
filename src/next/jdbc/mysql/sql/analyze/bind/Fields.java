@@ -24,7 +24,7 @@ public class Fields {
 		if (fields.size() == 0)
 			return query;
 		fields.forEach(param -> {
-			query.append(param.getWrappedColumnName());
+			query.append(param.getColumnName());
 			query.append(suffix);
 			query.append(delimiter);
 			query.addParameter(param.getObject());
@@ -38,7 +38,7 @@ public class Fields {
 		if (fields.size() == 0)
 			return query.toString();
 		fields.forEach(param -> {
-			query.append(param.getWrappedColumnName());
+			query.append(param.getColumnName());
 			query.append(suffix);
 			query.append(delimiter);
 		});

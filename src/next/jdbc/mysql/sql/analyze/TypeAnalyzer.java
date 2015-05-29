@@ -54,7 +54,13 @@ public class TypeAnalyzer implements Analyzer {
 		return result;
 	}
 
+	private static final String Q = "`";
+
 	@Override
+	public String getFinalTableName() {
+		return Q + tableInfo.getTableName() + Q;
+	}
+
 	public String getTableName() {
 		return tableInfo.getTableName();
 	}
@@ -74,7 +80,7 @@ public class TypeAnalyzer implements Analyzer {
 
 	@Override
 	public void setKeyParameters(Object[] parameters) {
-		for(int i=0; i<parameters.length; i++)
+		for (int i = 0; i < parameters.length; i++)
 			keyFields.get(i).setObject(parameters[i]);
 	}
 }

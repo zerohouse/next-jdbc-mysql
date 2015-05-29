@@ -26,7 +26,7 @@ public interface Analyzer {
 
 	Fields getAllFields();
 
-	String getTableName();
+	String getFinalTableName();
 
 	void setKeyParameters(Object[] parameters);
 

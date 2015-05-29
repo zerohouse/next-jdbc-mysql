@@ -28,13 +28,4 @@ public class JoinAnalyzer extends JoinTypeAnalyzer {
 		return result;
 	}
 
-	private final static String JOIN_NAME = "%s %s JOIN %s ON %s = %s";
-
-	@Override
-	public String getTableName() {
-		return String.format(JOIN_NAME, left.getTableName(), join.getJoinType().getType(), right.getTableName(),
-				left.getAllFields().findByFieldName(join.getLeftOnFieldName()).getColumnName(),
-				right.getAllFields().findByFieldName(join.getRightOnFieldName()).getColumnName());
-	}
-
 }

@@ -28,19 +28,12 @@ public class FieldObject {
 		return fieldInfo;
 	}
 
-	private final static String Q = "`";
 	private final static String DOT = ".";
 
 	public String getColumnName() {
 		if (join)
 			return tableName + DOT + fieldInfo.getColumnName();
 		return fieldInfo.getColumnName();
-	}
-
-	public String getWrappedColumnName() {
-		if (join)
-			return tableName + DOT + Q + fieldInfo.getColumnName() + Q;
-		return Q + fieldInfo.getColumnName() + Q;
 	}
 
 	public Field getField() {

@@ -20,12 +20,12 @@ public class SqlMaker {
 
 	public Sql select(Analyzer analyzer) {
 		Sql result = analyzer.getNotNullAllFields().getQuery(EQ, AND);
-		return result.setQuery(String.format(SELECT, ASTAR, analyzer.getTableName(), result.getQueryString()));
+		return result.setQuery(String.format(SELECT, ASTAR, analyzer.getFinalTableName(), result.getQueryString()));
 	}
 
 	public Sql insert(Analyzer analyzer) {
 		Sql result = analyzer.getNotNullAllFields().getQuery("", COMMA);
-		return result.setQuery(String.format(INSERT, analyzer.getTableName(), result.getQueryString(), makeQ(result.size())));
+		return result.setQuery(String.format(INSERT, analyzer.getFinalTableName(), result.getQueryString(), makeQ(result.size())));
 	}
 
 	public Sql update(Analyzer analyzer) {
@@ -34,7 +34,7 @@ public class SqlMaker {
 		Sql query = new Sql();
 		query.concatParameters(fields);
 		query.concatParameters(keys);
-		return query.setQuery(String.format(UPDATE, analyzer.getTableName(), fields.getQueryString(), keys.getQueryString()));
+		return query.setQuery(String.format(UPDATE, analyzer.getFinalTableName(), fields.getQueryString(), keys.getQueryString()));
 	}
 
 	public Sql update(Analyzer analyzer, String... keyFieldName) {
@@ -53,12 +53,12 @@ public class SqlMaker {
 		Sql keys = key.getQuery(EQ, AND);
 		query.concatParameters(fields);
 		query.concatParameters(keys);
-		return query.setQuery(String.format(UPDATE, analyzer.getTableName(), fields.getQueryString(), keys.getQueryString()));
+		return query.setQuery(String.format(UPDATE, analyzer.getFinalTableName(), fields.getQueryString(), keys.getQueryString()));
 	}
 
 	public Sql delete(Analyzer analyzer) {
 		Sql result = analyzer.getNotNullAllFields().getQuery(EQ, AND);
-		return result.setQuery(String.format(DELETE, analyzer.getTableName(), result.getQueryString()));
+		return result.setQuery(String.format(DELETE, analyzer.getFinalTableName(), result.getQueryString()));
 	}
 
 	private static final String QC = "?, ";
@@ -71,7 +71,7 @@ public class SqlMaker {
 		Sql query = new Sql();
 		query.concatParameters(notNullfields);
 		query.concatParameters(fields);
-		return query.setQuery(String.format(INSERT_IF_EXISTS_UPDATE, analyzer.getTableName(), notNullfields.getQueryString(),
+		return query.setQuery(String.format(INSERT_IF_EXISTS_UPDATE, analyzer.getFinalTableName(), notNullfields.getQueryString(),
 				makeQ(notNullfields.size()), fields.getQueryString()));
 	}
 

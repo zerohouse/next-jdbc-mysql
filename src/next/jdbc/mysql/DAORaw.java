@@ -11,6 +11,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import next.jdbc.mysql.constants.Constants;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,8 +66,9 @@ public class DAORaw {
 			int columnCount = metaData.getColumnCount();
 			Map<String, Object> record = new HashMap<String, Object>();
 			for (int i = 1; i <= columnCount; i++) {
-				record.put(metaData.getColumnLabel(i).toLowerCase(), rs.getObject(i));
-				record.put(metaData.getTableName(i) + DOT + metaData.getColumnName(i).toLowerCase(), rs.getObject(i));
+				record.put(metaData.getColumnLabel(i), rs.getObject(i));
+				record.put(Constants.wrapped(metaData.getTableName(i)) + DOT + Constants.wrapped(metaData.getColumnName(i)).toLowerCase(),
+						rs.getObject(i));
 			}
 			return record;
 		} catch (SQLException e) {

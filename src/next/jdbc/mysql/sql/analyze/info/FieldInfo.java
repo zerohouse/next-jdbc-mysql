@@ -3,6 +3,7 @@ package next.jdbc.mysql.sql.analyze.info;
 import java.lang.reflect.Field;
 
 import next.jdbc.mysql.annotation.Column;
+import next.jdbc.mysql.constants.Constants;
 
 public class FieldInfo {
 
@@ -19,7 +20,7 @@ public class FieldInfo {
 	}
 
 	public String getColumnName() {
-		return columnName;
+		return Constants.wrapped(columnName);
 	}
 
 }
