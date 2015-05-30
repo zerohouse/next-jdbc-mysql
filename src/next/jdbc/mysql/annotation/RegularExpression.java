@@ -16,4 +16,6 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)
 public @interface RegularExpression {
 	String value();
+	
+	String errorMessage();
 }

@@ -24,8 +24,9 @@ public class FieldObject {
 		if (object == null)
 			return;
 		if (field.isAnnotationPresent(RegularExpression.class)) {
-			if (!object.toString().matches(field.getDeclaredAnnotation(RegularExpression.class).value()))
-				throw new RegexNotMatchedException();
+			RegularExpression regex = field.getDeclaredAnnotation(RegularExpression.class);
+			if (!object.toString().matches(regex.value()))
+				throw new RegexNotMatchedException(regex.errorMessage());
 		}
 	}
 

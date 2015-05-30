@@ -6,6 +6,10 @@ package next.jdbc.mysql.exception;
  */
 public class RegexNotMatchedException extends RuntimeException {
 
+	public RegexNotMatchedException(String message) {
+		super(message);
+	}
+
 	private static final long serialVersionUID = 5327993556995210476L;
 
 }
