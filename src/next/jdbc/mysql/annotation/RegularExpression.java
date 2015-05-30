@@ -17,5 +17,5 @@ import java.lang.annotation.Target;
 public @interface RegularExpression {
 	String value();
 	
-	String errorMessage();
+	String errorMessage() default "$field의 형식이 맞지 않습니다.";
 }
