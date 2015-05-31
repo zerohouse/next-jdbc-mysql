@@ -127,6 +127,26 @@ public class DAO extends DAORaw {
 			return null;
 		return (T) ModelMaker.setByMap(object.getClass(), object, recordMap, analyzer);
 	}
+	
+	/**
+	 * Object를 찾습니다. 키필드를 지정합니다.
+	 * <p>
+	 *
+	 * @param object
+	 *            찾을 object
+	 * @param keyFieldNames
+	 *            오브젝트의 keyField
+	 * @return object 실행결과
+	 */
+	@SuppressWarnings("unchecked")
+	public <T> T find(T object, String... keyFieldNames) {
+		Analyzer analyzer = Analyzer.getObjectAnalyzer(object);
+		Sql query = maker.select(analyzer, keyFieldNames);
+		Map<String, Object> recordMap = getRecord(query.getQueryString(), query.getParameterArray());
+		if (recordMap == null)
+			return null;
+		return (T) ModelMaker.setByMap(object.getClass(), object, recordMap, analyzer);
+	}
 
 	/**
 	 * Object와 같은 조건의 리스트를 반환합니다.<br>

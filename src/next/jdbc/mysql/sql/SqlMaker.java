@@ -22,6 +22,21 @@ public class SqlMaker {
 		Sql result = analyzer.getNotNullAllFields().getQuery(EQ, AND);
 		return result.setQuery(String.format(SELECT, ASTAR, analyzer.getTableName(), result.getQueryString()));
 	}
+	
+	public Sql select(Analyzer analyzer, String... keyFieldName) {
+		Fields key = new Fields();
+		List<String> keyFields = Arrays.asList(keyFieldName);
+		analyzer.getNotNullAllFields().forEach(field -> {
+			if (keyFields.contains(field.getField().getName())) {
+				key.add(field);
+				return;
+			}
+		});
+		Sql query = new Sql();
+		Sql keys = key.getQuery(EQ, AND);
+		query.concatParameters(keys);
+		return query.setQuery(String.format(SELECT, ASTAR, analyzer.getTableName(), keys.getQueryString()));
+	}
 
 	public Sql insert(Analyzer analyzer) {
 		Sql result = analyzer.getNotNullAllFields().getQuery("", COMMA);
