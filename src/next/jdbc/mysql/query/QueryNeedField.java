@@ -14,6 +14,7 @@ public class QueryNeedField {
 	 *
 	 * @param fieldName
 	 *            찾을 필드의 이름입니다. [fieldName] or [className].[fieldName]
+	 * @return QueryNeedValue
 	 */
 	public QueryNeedValue field(String fieldName) {
 		query.makeWhere();

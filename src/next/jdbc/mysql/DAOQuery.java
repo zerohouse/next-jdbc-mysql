@@ -28,12 +28,12 @@ public class DAOQuery extends DAORaw {
 	 * SQL에 해당하는 레코드를 Object로 리턴합니다.
 	 * <p>
 	 *
-	 * @param sql
-	 *            SQL 실행문
 	 * @param <T>
 	 *            클래스 타입
 	 * @param type
 	 *            클래스 타입
+	 * @param sql
+	 *            SQL 실행문
 	 * @param parameters
 	 *            SQL 파라미터
 	 * @return T
@@ -89,8 +89,6 @@ public class DAOQuery extends DAORaw {
 	 * 테이블에 해당하는 Insert Query를 얻습니다.
 	 * <p>
 	 * 
-	 * @param <T>
-	 *            클래스 타입
 	 * @param type
 	 *            클래스 타입
 	 * @return InsertQuery Query
@@ -98,13 +96,11 @@ public class DAOQuery extends DAORaw {
 	public InsertQuery getInsertQuery(Class<?> type) {
 		return new InsertQuery(this, type);
 	}
-	
+
 	/**
 	 * 테이블에 해당하는 Update Query를 얻습니다.
 	 * <p>
 	 * 
-	 * @param <T>
-	 *            클래스 타입
 	 * @param type
 	 *            클래스 타입
 	 * @return UpdateQuery Query
@@ -117,8 +113,6 @@ public class DAOQuery extends DAORaw {
 	 * 테이블에 해당하는 Delete Query를 얻습니다.
 	 * <p>
 	 * 
-	 * @param <T>
-	 *            클래스 타입
 	 * @param type
 	 *            클래스 타입
 	 * @return DeleteQuery Query

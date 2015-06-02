@@ -20,6 +20,8 @@ public class QueryNeedValue {
 	 *
 	 * @param value
 	 *            찾을 값입니다.
+	 * 
+	 * @return QueryNeedCondition
 	 */
 	public QueryNeedCondition like(Object value) {
 		String val = value.toString();
@@ -46,6 +48,7 @@ public class QueryNeedValue {
 	 *
 	 * @param value
 	 *            찾을 값입니다.
+	 * @return QueryNeedCondition
 	 */
 	public QueryNeedCondition equal(Object value) {
 		query.makeWhere();

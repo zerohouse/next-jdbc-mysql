@@ -37,6 +37,7 @@ public class InsertQuery extends Query {
 	 *            필드네임입니다. [fieldName] or [className].[fieldName]
 	 * @param value
 	 *            설정할 값입니다.
+	 * @return InsertQuery
 	 */
 	public InsertQuery set(String fieldName, Object value) {
 		values.put(fieldName, value);

@@ -20,8 +20,11 @@ public abstract class WhereQuery extends Query {
 
 	/**
 	 * field 이름으로 field를 선택합니다.<br>
-	 * 포맷은 [fieldname] 혹은 [classname].[fieldname]입니다.
-	 * <p>
+	 * 
+	 * @param fieldName
+	 *            [fieldname] 혹은 [classname].[fieldname]입니다.
+	 * 
+	 * @return QueryNeedValue
 	 *
 	 */
 	public QueryNeedValue field(String fieldName) {

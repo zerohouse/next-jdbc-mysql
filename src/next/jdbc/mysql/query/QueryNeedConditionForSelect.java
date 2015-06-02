@@ -17,8 +17,8 @@ public class QueryNeedConditionForSelect<T> {
 
 	/**
 	 * and조건의 다른 필드를 선택합니다.
-	 * <p>
-	 *
+	 * 
+	 * @return QueryNeedFieldForSelect
 	 */
 	public QueryNeedFieldForSelect<T> and() {
 		query.where.append(AND);
@@ -27,8 +27,8 @@ public class QueryNeedConditionForSelect<T> {
 
 	/**
 	 * or조건의 다른 필드를 선택합니다.
-	 * <p>
 	 *
+	 * @return QueryNeedFieldForSelect
 	 */
 	public QueryNeedFieldForSelect<T> or() {
 		query.where.append(OR);
@@ -43,6 +43,7 @@ public class QueryNeedConditionForSelect<T> {
 	 *            시작값
 	 * @param end
 	 *            범위
+	 * @return QueryNeedFieldForSelect
 	 */
 	public QueryNeedConditionForSelect<T> limit(int begin, int end) {
 		query.limit = new Limit(begin, end);
@@ -55,6 +56,7 @@ public class QueryNeedConditionForSelect<T> {
 	 *
 	 * @param fieldName
 	 *            기준 필드 이름
+	 * @return QueryNeedFieldForSelect
 	 */
 	public QueryNeedConditionForSelect<T> orderBy(String fieldName) {
 		return orderBy(fieldName, false);
@@ -62,12 +64,12 @@ public class QueryNeedConditionForSelect<T> {
 
 	/**
 	 * 정렬 조건을 부여합니다.
-	 * <p>
 	 *
 	 * @param fieldName
 	 *            기준 필드 이름
 	 * @param desc
 	 *            역순 여부
+	 * @return QueryNeedFieldForSelect
 	 */
 	public QueryNeedConditionForSelect<T> orderBy(String fieldName, boolean desc) {
 		query.orderBy.order(query.typeAnalyzer.get(fieldName).getColumnName(), desc);
@@ -76,7 +78,6 @@ public class QueryNeedConditionForSelect<T> {
 
 	/**
 	 * 쿼리 조건에 맞는 첫번쨰 레코드를 반환합니다.
-	 * <p>
 	 *
 	 * @return T 결과
 	 */
@@ -88,7 +89,7 @@ public class QueryNeedConditionForSelect<T> {
 	 * 쿼리 조건에 맞는 레코드를 리스트로 반환합니다.
 	 * <p>
 	 *
-	 * @return List<T> 결과
+	 * @return List 결과
 	 */
 	public List<T> findList() {
 		return query.findList();

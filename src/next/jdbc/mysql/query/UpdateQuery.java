@@ -34,6 +34,7 @@ public class UpdateQuery extends WhereQuery {
 	 *            필드네임입니다. [fieldName] or [className].[fieldName]
 	 * @param value
 	 *            설정할 값입니다.
+	 * @return UpdateQuery
 	 */
 	public UpdateQuery set(String fieldName, Object value) {
 		values.put(fieldName, value);

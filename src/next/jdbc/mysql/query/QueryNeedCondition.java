@@ -15,8 +15,8 @@ public class QueryNeedCondition {
 
 	/**
 	 * and조건의 다른 필드를 선택합니다.
-	 * <p>
 	 *
+	 * @return QueryNeedField
 	 */
 	public QueryNeedField and() {
 		query.where.append(AND);
@@ -25,8 +25,8 @@ public class QueryNeedCondition {
 
 	/**
 	 * or조건의 다른 필드를 선택합니다.
-	 * <p>
 	 *
+	 * @return QueryNeedField
 	 */
 	public QueryNeedField or() {
 		query.where.append(OR);
@@ -40,7 +40,6 @@ public class QueryNeedCondition {
 
 	/**
 	 * 쿼리를 실행합니다.
-	 * <p>
 	 *
 	 * @return boolean 실행결과가 리턴됩니다.
 	 */

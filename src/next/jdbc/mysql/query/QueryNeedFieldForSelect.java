@@ -14,6 +14,7 @@ public class QueryNeedFieldForSelect<T> {
 	 *
 	 * @param fieldName
 	 *            찾을 필드의 이름입니다. [fieldName] or [className].[fieldName]
+	 * @return QueryNeedValueForSelect
 	 */
 	public QueryNeedValueForSelect<T> field(String fieldName) {
 		query.makeWhere();

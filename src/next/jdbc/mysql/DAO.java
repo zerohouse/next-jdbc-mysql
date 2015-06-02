@@ -84,6 +84,8 @@ public class DAO extends DAOQuery {
 	 * Object를 찾습니다. 키필드를 지정합니다.
 	 * <p>
 	 *
+	 * @param <T>
+	 *            타입
 	 * @param object
 	 *            찾을 object
 	 * @param keyFieldNames
