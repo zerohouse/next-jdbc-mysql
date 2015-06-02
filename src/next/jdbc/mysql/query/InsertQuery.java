@@ -8,20 +8,36 @@ import next.jdbc.mysql.query.support.Delimiter;
 import next.jdbc.mysql.query.support.Typer;
 import next.jdbc.mysql.sql.Sql;
 
-public class InsertQuery {
+/**
+ * Insert Query입니다.
+ * <p>
+ *
+ * set("fieldName", value)를 통해 값을 설정합니다.
+ */
+public class InsertQuery extends Query {
 
 	Map<String, Object> values;
 	Typer typeAnalyzer;
 	Class<?> type;
 	Delimiter delimiter;
 
-	public InsertQuery(Class<?> type) {
+	public InsertQuery(DAORaw dao, Class<?> type) {
+		super(dao);
 		this.type = type;
 		typeAnalyzer = new Typer(type);
 		this.values = new HashMap<String, Object>();
 		delimiter = new Delimiter(", ");
 	}
 
+	/**
+	 * 필드에 밸류를 설정합니다.
+	 * <p>
+	 *
+	 * @param fieldName
+	 *            필드네임입니다. [fieldName] or [className].[fieldName]
+	 * @param value
+	 *            설정할 값입니다.
+	 */
 	public InsertQuery set(String fieldName, Object value) {
 		values.put(fieldName, value);
 		return this;
@@ -54,7 +70,6 @@ public class InsertQuery {
 	}
 
 	public Boolean execute() {
-		DAORaw dao = new DAORaw();
 		Sql sql = getSql();
 		return dao.execute(sql.getQueryString(), sql.getParameterArray());
 	}

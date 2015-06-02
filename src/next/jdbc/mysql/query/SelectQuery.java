@@ -2,25 +2,26 @@ package next.jdbc.mysql.query;
 
 import java.util.List;
 
-import next.jdbc.mysql.DAORaw;
+import next.jdbc.mysql.DAOQuery;
 import next.jdbc.mysql.query.support.Typer;
 import next.jdbc.mysql.query.support.Limit;
 import next.jdbc.mysql.query.support.OrderBy;
 import next.jdbc.mysql.sql.Sql;
 
-public class SelectQuery<T> extends Query {
+public class SelectQuery<T> {
 
 	Sql where;
 	Typer typeAnalyzer;
 	Limit limit;
 	OrderBy orderBy;
 	Class<T> type;
+	DAOQuery dao;
 
-	public SelectQuery(DAORaw dao, Class<T> type) {
-		super(dao);
+	public SelectQuery(DAOQuery dao, Class<T> type) {
 		this.type = type;
 		orderBy = new OrderBy();
 		typeAnalyzer = new Typer(type);
+		this.dao = dao;
 	}
 
 	@Override

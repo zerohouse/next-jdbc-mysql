@@ -13,9 +13,9 @@ pom.xml에 아래의 레파지토리와 Dependency설정을 추가합니다.
 
 ###Dependency
     <dependency>
-		<groupId>at.begin</groupId>
+    	<groupId>at.begin</groupId>
 		<artifactId>next-jdbc-mysql</artifactId>
-		<version>0.0.3</version>
+		<version>0.0.5</version>
 	</dependency>
 
 
@@ -24,16 +24,60 @@ pom.xml에 아래의 레파지토리와 Dependency설정을 추가합니다.
 테이블 생성, 테스트데이터 관리, CRUD까지 모두 자동화 합니다.
     
 
-## DAO.class, GDAO<T>.class
+## DAO.class
+    
+## Methods
+    
+    find(T)
+    find(T, String...)
+    findList(T)
+    findList(T, String)
+    insert(Object)
+    insertIfExistUpdate(Object)
+    update(Object)
+    update(Object, String...)
+    delete(Object)
+    get(Class<T>, String, Object...)
+    getList(Class<T>, String, Object...)
+    getSelectQuery(Class<T>)
+    getInsertQuery(Class<?>)
+    getUpdateQuery(Class<?>)
+    getDeleteQuery(Class<?>)
+    getRecord(String, Object...)
+    getRecords(String, Object...)
+    getRecordAsList(String, Object...)
+    getRecordsAsList(String, Object...)
+    
     
 ### Example Usage
-    DAO dao = new DAO();
-    User user = dao.find(User.class, userId);
+
+#### 1. Model
+    @Table
+    public class User {
+        @Key(AUTO_INCREMENT = true)
+    	private Integer id;
+    	@Column(function = { "index", "unique" })
+    	private String email;
+    	private String name;
+    	private String password;
+    	@Column(DATA_TYPE = "CHAR(1)")
+    	private String gender;
+    }
     
-    GDAO<User> userDao = new GDAO<User>(User.class);
-    User user2 = userDAO.find(userId);
+#### 2. Use
+
+	TableMaker maker = new TableMaker(User.class);
+	maker.createTable();
+	DAO dao = new DAO();
+	dao.get(User.class, 1);
+	dao.insert(new User("parksungho86@gmail.com", "newPassword"));
+	dao.update(new User("parksungho86@gmail.com", "newPassword"), "email");
+	dao.find(new User("parksungho86@gmail.com", "newPassword")); 
+	dao.findList(new User("parksungho86@gmail.com", "newPassword")); 
+	dao.delete(new User("parksungho86@gmail.com", "newPassword")); 
+	dao.getSelectQuery(User.class).field("email").like("pa").or().field("password").equal("3").limit(3, 4).orderBy("id").find(); 
     
-    user.equals(user2); // true
+    
     
 ### Transaction : 사용후 반드시 DAO를 close해야함.
 메서드 파라미터에서 사용시, 메서드 레벨 실행 후 close()호출함
@@ -45,7 +89,7 @@ pom.xml에 아래의 레파지토리와 Dependency설정을 추가합니다.
     
     
 ## TableMaker.class, PackageCreator.class
-아래의 어노테이션 설정하고 모델만 만들면 테이블 만들어줍니다.
+모델만 만들면 테이블 만들어줍니다.
 
 ### Example Usage
     PackageCreator.create(); // 모든 테이블 생성
@@ -82,9 +126,9 @@ pom.xml에 아래의 레파지토리와 Dependency설정을 추가합니다.
     }
 
 
+#Join
+
 ### Join Model Example
-
-
     public class UserMessage extends Join<User, Message> {
     
         public UserMessage(User left, Message right) {

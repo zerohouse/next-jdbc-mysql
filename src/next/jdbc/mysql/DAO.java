@@ -20,7 +20,7 @@ import next.jdbc.mysql.sql.analyze.bind.ModelMaker;
  * 
  */
 
-public class DAO extends DAORaw {
+public class DAO extends DAOQuery {
 
 	private SqlMaker maker;
 

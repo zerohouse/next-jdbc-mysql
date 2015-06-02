@@ -14,6 +14,13 @@ public class QueryNeedValue {
 		this.fieldInfo = query.typeAnalyzer.get(fieldName);
 	}
 
+	/**
+	 * 선택한 필드와 유사한 값을 찾습니다.
+	 * <p>
+	 *
+	 * @param value
+	 *            찾을 값입니다.
+	 */
 	public QueryNeedCondition like(Object value) {
 		String val = value.toString();
 		query.makeWhere();
@@ -33,6 +40,13 @@ public class QueryNeedValue {
 		return new QueryNeedCondition(query);
 	}
 
+	/**
+	 * 선택한 필드와 같은 값을 찾습니다.
+	 * <p>
+	 *
+	 * @param value
+	 *            찾을 값입니다.
+	 */
 	public QueryNeedCondition equal(Object value) {
 		query.makeWhere();
 		query.where.append(fieldInfo.getColumnName());

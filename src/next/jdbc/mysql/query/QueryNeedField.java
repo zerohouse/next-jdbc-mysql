@@ -8,6 +8,13 @@ public class QueryNeedField {
 		this.query = query;
 	}
 
+	/**
+	 * 필드를 선택합니다.
+	 * <p>
+	 *
+	 * @param fieldName
+	 *            찾을 필드의 이름입니다. [fieldName] or [className].[fieldName]
+	 */
 	public QueryNeedValue field(String fieldName) {
 		query.makeWhere();
 		return new QueryNeedValue(fieldName, query);

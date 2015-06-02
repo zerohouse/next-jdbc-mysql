@@ -3,6 +3,12 @@ package next.jdbc.mysql.query;
 import next.jdbc.mysql.DAORaw;
 import next.jdbc.mysql.sql.Sql;
 
+/**
+ * Delete Query입니다.
+ * <p>
+ *
+ * field("fieldName")를 통해 조건을 설정합니다.
+ */
 public class DeleteQuery extends WhereQuery {
 
 	Class<?> type;
@@ -23,10 +29,6 @@ public class DeleteQuery extends WhereQuery {
 		return result;
 	}
 
-	public QueryNeedValue field(String fieldName) {
-		makeWhere();
-		return new QueryNeedValue(fieldName, this);
-	}
 
 	@Override
 	public String toString() {

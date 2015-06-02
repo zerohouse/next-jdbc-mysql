@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Map;
 
 import next.jdbc.mysql.constants.Constants;
-import next.jdbc.mysql.sql.analyze.bind.ModelMaker;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -224,53 +223,6 @@ public class DAORaw {
 		}
 	}
 
-	/**
-	 * SQL에 해당하는 레코드를 Object로 리턴합니다.
-	 * <p>
-	 *
-	 * @param sql
-	 *            SQL 실행문
-	 * @param <T>
-	 *            클래스 타입
-	 * @param type
-	 *            클래스 타입
-	 * @param parameters
-	 *            SQL 파라미터
-	 * @return T
-	 */
-
-	public <T> T get(Class<T> type, String sql, Object... parameters) {
-		Map<String, Object> record = getRecord(sql, parameters);
-		if (record == null)
-			return null;
-		return ModelMaker.getByMap(type, record);
-	}
-
-	/**
-	 * SQL에 해당하는 Object를 리스트로 만들어 리턴합니다.
-	 * <p>
-	 *
-	 * @param <T>
-	 *            클래스 타입
-	 * @param type
-	 *            클래스 타입
-	 * @param sql
-	 *            sql문
-	 * @param parameters
-	 *            ?에 파싱할 파라미터
-	 * @return T List
-	 */
-	public <T> List<T> getList(Class<T> type, String sql, Object... parameters) {
-		List<Map<String, Object>> records = getRecords(sql, parameters);
-		List<T> result = new ArrayList<T>();
-		if (records == null)
-			return null;
-		records.forEach(record -> {
-			result.add(ModelMaker.getByMap(type, record));
-		});
-		return result;
-	}
-
 	protected static void close(ResultSet rs) {
 		if (rs == null)
 			return;
@@ -298,6 +250,8 @@ public class DAORaw {
 		cm.close();
 	}
 
+	private static final String LOG = "Sql : {}, Parameters : {}";
+
 	protected static PreparedStatement getPSTMT(ConnectionManager cm, String sql, Object... parameters) {
 		Connection conn = cm.getConnection();
 		PreparedStatement pstmt = null;
@@ -307,7 +261,7 @@ public class DAORaw {
 				for (int j = 0; j < parameters.length; j++) {
 					pstmt.setObject(j + 1, parameters[j]);
 				}
-			logger.debug(pstmt.toString());
+			logger.debug(LOG, pstmt.toString(), parameters);
 		} catch (SQLException e) {
 			errorLog(sql, e, parameters);
 		}

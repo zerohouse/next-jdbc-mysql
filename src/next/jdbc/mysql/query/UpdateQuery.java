@@ -7,6 +7,12 @@ import next.jdbc.mysql.DAORaw;
 import next.jdbc.mysql.query.support.Delimiter;
 import next.jdbc.mysql.sql.Sql;
 
+/**
+ * Update Query입니다.
+ * <p>
+ *
+ * field("fieldName")를 통해 조건을 설정합니다.
+ */
 public class UpdateQuery extends WhereQuery {
 
 	Map<String, Object> values;
@@ -20,6 +26,15 @@ public class UpdateQuery extends WhereQuery {
 		delimiter = new Delimiter(", ");
 	}
 
+	/**
+	 * 필드에 밸류를 설정합니다.
+	 * <p>
+	 *
+	 * @param fieldName
+	 *            필드네임입니다. [fieldName] or [className].[fieldName]
+	 * @param value
+	 *            설정할 값입니다.
+	 */
 	public UpdateQuery set(String fieldName, Object value) {
 		values.put(fieldName, value);
 		return this;
@@ -43,11 +58,6 @@ public class UpdateQuery extends WhereQuery {
 			result.concat(where);
 		}
 		return result;
-	}
-
-	public QueryNeedValue field(String fieldName) {
-		makeWhere();
-		return new QueryNeedValue(fieldName, this);
 	}
 
 	@Override
