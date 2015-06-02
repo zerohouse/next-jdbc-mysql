@@ -101,7 +101,7 @@ pom.xml에 아래의 레파지토리와 Dependency설정을 추가합니다.
     tm.reset();
     
     
-### @Table, @Key, @Column, @Exclude, @RequiredRegex
+### @Table, @Key, @Column, @Exclude, @RegexFormat
 
 ### Example Model
     @Table
@@ -117,7 +117,7 @@ pom.xml에 아래의 레파지토리와 Dependency설정을 추가합니다.
     	"^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"+
     		"[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
         
-        @RequiredRegex(EMAIL_PATTERN)
+        @RegexFormat(EMAIL_PATTERN)
         private String email;
         
         @OtherTable

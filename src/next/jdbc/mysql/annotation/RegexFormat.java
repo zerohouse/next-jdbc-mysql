@@ -14,7 +14,7 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-public @interface RegularExpression {
+public @interface RegexFormat {
 	String value();
 	
 	String errorMessage() default "$field의 형식이 맞지 않습니다.";

@@ -7,6 +7,7 @@ import next.jdbc.mysql.DAORaw;
 import next.jdbc.mysql.query.support.Delimiter;
 import next.jdbc.mysql.query.support.Typer;
 import next.jdbc.mysql.sql.Sql;
+import next.jdbc.mysql.sql.analyze.info.FieldInfo;
 
 /**
  * Insert Query입니다.
@@ -52,8 +53,10 @@ public class InsertQuery extends Query {
 		StringBuilder fields = new StringBuilder();
 		Delimiter limiter = new Delimiter(COMMA);
 		values.forEach((key, value) -> {
+			FieldInfo info = typeAnalyzer.get(key);
+			info.regexMatchedCheck(value);
 			fields.append(limiter.get());
-			fields.append(typeAnalyzer.get(key).getColumnName());
+			fields.append(info.getColumnName());
 			result.addParameter(value);
 		});
 		result.setQuery(String.format(FORMAT, typeAnalyzer.getTableName(), fields.toString(), getQ(values.size())));

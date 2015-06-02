@@ -6,6 +6,7 @@ import java.util.Map;
 import next.jdbc.mysql.DAORaw;
 import next.jdbc.mysql.query.support.Delimiter;
 import next.jdbc.mysql.sql.Sql;
+import next.jdbc.mysql.sql.analyze.info.FieldInfo;
 
 /**
  * Update Query입니다.
@@ -48,8 +49,10 @@ public class UpdateQuery extends WhereQuery {
 		StringBuilder fields = new StringBuilder();
 		Delimiter limiter = new Delimiter(COMMA);
 		values.forEach((key, value) -> {
+			FieldInfo info = typeAnalyzer.get(key);
+			info.regexMatchedCheck(value);
 			fields.append(limiter.get());
-			fields.append(typeAnalyzer.get(key).getColumnName());
+			fields.append(info.getColumnName());
 			fields.append(EQ);
 			result.addParameter(value);
 		});
