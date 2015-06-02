@@ -77,4 +77,5 @@ public class TypeAnalyzer implements Analyzer {
 		for (int i = 0; i < parameters.length; i++)
 			keyFields.get(i).setObject(parameters[i]);
 	}
+
 }

@@ -1,6 +1,5 @@
 package next.jdbc.mysql;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -59,53 +58,6 @@ public class DAO extends DAORaw {
 	}
 
 	/**
-	 * SQL에 해당하는 레코드를 Object로 리턴합니다.
-	 * <p>
-	 *
-	 * @param sql
-	 *            SQL 실행문
-	 * @param <T>
-	 *            클래스 타입
-	 * @param type
-	 *            클래스 타입
-	 * @param parameters
-	 *            SQL 파라미터
-	 * @return T
-	 */
-
-	public <T> T get(Class<T> type, String sql, Object... parameters) {
-		Map<String, Object> record = getRecord(sql, parameters);
-		if (record == null)
-			return null;
-		return ModelMaker.getByMap(type, record);
-	}
-
-	/**
-	 * SQL에 해당하는 Object를 리스트로 만들어 리턴합니다.
-	 * <p>
-	 *
-	 * @param <T>
-	 *            클래스 타입
-	 * @param type
-	 *            클래스 타입
-	 * @param sql
-	 *            sql문
-	 * @param parameters
-	 *            ?에 파싱할 파라미터
-	 * @return T List
-	 */
-	public <T> List<T> getList(Class<T> type, String sql, Object... parameters) {
-		List<Map<String, Object>> records = getRecords(sql, parameters);
-		List<T> result = new ArrayList<T>();
-		if (records == null)
-			return null;
-		records.forEach(record -> {
-			result.add(ModelMaker.getByMap(type, record));
-		});
-		return result;
-	}
-
-	/**
 	 * Object를 조건이 맞는 레코드를 찾습니다.<br>
 	 * 만약 조건에 맞는 결과가 없다면 null이 리턴됩니다.<br>
 	 * User { name : null, age : 10, email : mail@mail.com, gender : null }를<br>
@@ -127,7 +79,7 @@ public class DAO extends DAORaw {
 			return null;
 		return (T) ModelMaker.setByMap(object.getClass(), object, recordMap, analyzer);
 	}
-	
+
 	/**
 	 * Object를 찾습니다. 키필드를 지정합니다.
 	 * <p>

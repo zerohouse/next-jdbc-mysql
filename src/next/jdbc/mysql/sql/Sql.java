@@ -64,4 +64,13 @@ public class Sql {
 		return parameters.toArray();
 	}
 
+	public void concat(Sql sql) {
+		query.append(sql.query);
+		parameters.addAll(sql.parameters);
+	}
+
+	public StringBuilder getQuery() {
+		return query;
+	}
+
 }

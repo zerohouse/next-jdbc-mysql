@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 import next.jdbc.mysql.constants.Constants;
+import next.jdbc.mysql.sql.analyze.bind.ModelMaker;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,8 +68,7 @@ public class DAORaw {
 			Map<String, Object> record = new HashMap<String, Object>();
 			for (int i = 1; i <= columnCount; i++) {
 				record.put(metaData.getColumnLabel(i), rs.getObject(i));
-				record.put(Constants.wrapped(metaData.getTableName(i)) + DOT + Constants.wrapped(metaData.getColumnName(i)).toLowerCase(),
-						rs.getObject(i));
+				record.put(Constants.wrapped(metaData.getTableName(i)) + DOT + Constants.wrapped(metaData.getColumnName(i)).toLowerCase(), rs.getObject(i));
 			}
 			return record;
 		} catch (SQLException e) {
@@ -107,8 +107,7 @@ public class DAORaw {
 				HashMap<String, Object> columns = new HashMap<String, Object>();
 				for (int i = 1; i <= columnCount; i++) {
 					columns.put(metaData.getColumnLabel(i).toLowerCase(), rs.getObject(i));
-					columns.put(Constants.wrapped(metaData.getTableName(i)) + DOT + Constants.wrapped(metaData.getColumnName(i)).toLowerCase(),
-							rs.getObject(i));
+					columns.put(Constants.wrapped(metaData.getTableName(i)) + DOT + Constants.wrapped(metaData.getColumnName(i)).toLowerCase(), rs.getObject(i));
 				}
 				result.add(columns);
 			}
@@ -223,6 +222,53 @@ public class DAORaw {
 			close(pstmt);
 			cm.closeConnection();
 		}
+	}
+
+	/**
+	 * SQL에 해당하는 레코드를 Object로 리턴합니다.
+	 * <p>
+	 *
+	 * @param sql
+	 *            SQL 실행문
+	 * @param <T>
+	 *            클래스 타입
+	 * @param type
+	 *            클래스 타입
+	 * @param parameters
+	 *            SQL 파라미터
+	 * @return T
+	 */
+
+	public <T> T get(Class<T> type, String sql, Object... parameters) {
+		Map<String, Object> record = getRecord(sql, parameters);
+		if (record == null)
+			return null;
+		return ModelMaker.getByMap(type, record);
+	}
+
+	/**
+	 * SQL에 해당하는 Object를 리스트로 만들어 리턴합니다.
+	 * <p>
+	 *
+	 * @param <T>
+	 *            클래스 타입
+	 * @param type
+	 *            클래스 타입
+	 * @param sql
+	 *            sql문
+	 * @param parameters
+	 *            ?에 파싱할 파라미터
+	 * @return T List
+	 */
+	public <T> List<T> getList(Class<T> type, String sql, Object... parameters) {
+		List<Map<String, Object>> records = getRecords(sql, parameters);
+		List<T> result = new ArrayList<T>();
+		if (records == null)
+			return null;
+		records.forEach(record -> {
+			result.add(ModelMaker.getByMap(type, record));
+		});
+		return result;
 	}
 
 	protected static void close(ResultSet rs) {
