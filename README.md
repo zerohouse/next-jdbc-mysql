@@ -270,7 +270,7 @@ resource폴더 내에 next-jdbc-mysql.json 위치 (기본 세팅을 담당)
     }
     
     
-# [CF 스프링 MVC 웹 MVC next-route](https://github.com/zerohouse/next-route)
+# [CF 웹 MVC next-route](https://github.com/zerohouse/next-route)
 # [CF 싱글턴 관리 next-bind](https://github.com/zerohouse/next-bind)
 
     
