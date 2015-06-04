@@ -1,6 +1,7 @@
 package next.jdbc.mysql.query;
 
 import java.util.List;
+import java.util.Map;
 
 import next.jdbc.mysql.query.support.Limit;
 
@@ -93,6 +94,39 @@ public class QueryNeedConditionForSelect<T> {
 	 */
 	public List<T> findList() {
 		return query.findList();
+	}
+
+	/**
+	 * 쿼리 조건에 맞는 첫번쨰 레코드를 맵으로 반환합니다.
+	 *
+	 * @return T 결과
+	 */
+	public Map<String, Object> asMap() {
+		return query.asMap();
+	}
+
+	/**
+	 * 쿼리 조건에 맞는 레코드를 맵의 리스트로 반환합니다.
+	 * <p>
+	 *
+	 * @return List 결과
+	 */
+	public List<Map<String, Object>> asMapList() {
+		return query.asMapList();
+	}
+
+	/**
+	 * 
+	 * 선택할 필드를 지정합니다. 지정하지 않으면 모두 선택합니다.
+	 * 
+	 * @param fieldNames
+	 *            선택한 필드
+	 *
+	 * @return QueryNeedConditionForSelect
+	 */
+	public QueryNeedConditionForSelect<T> select(String... fieldNames) {
+		query.select(fieldNames);
+		return this;
 	}
 
 	@Override
