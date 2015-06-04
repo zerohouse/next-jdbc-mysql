@@ -1,6 +1,15 @@
-# Next DAO Library 0.0.5
-편합니다!
+# Next-JDBC-MYSQL Library 0.0.5
+JDBC를 한줄로!
 
+    DAO dao = new DAO();
+    User user = dao.find(new User("parksungho86@gmail.com));
+    List<User> user = dao.findList(new User("parksungho86@gmail.com));
+    dao.insert(user);
+    dao.update(user);
+    dao.delete(user);    
+복잡한 쿼리도 외울 필요없이 자동완성으로 해결!
+
+    List<Map<String, Object>> mapList = dao.getSelectQuery(User.class).select("email", "id").orderBy("id").limit(3,3).whereField("email").like("3").and().field("email").equal(3).asMapList();
 
 ##GET
 pom.xml에 아래의 레파지토리와 Dependency설정을 추가합니다.
@@ -13,20 +22,16 @@ pom.xml에 아래의 레파지토리와 Dependency설정을 추가합니다.
 
 ###Dependency
     <dependency>
-    	<groupId>at.begin</groupId>
+        <groupId>at.begin</groupId>
 		<artifactId>next-jdbc-mysql</artifactId>
 		<version>0.0.5</version>
 	</dependency>
 
 
-# DAO
-어노테이션 기반 모델 설정 -> JDBC 한줄로 해결
-테이블 생성, 테스트데이터 관리, CRUD까지 모두 자동화 합니다.
-    
 
 ## DAO.class
     
-## Methods
+### Methods
     
     find(T)
     find(T, String...)
@@ -80,12 +85,9 @@ pom.xml에 아래의 레파지토리와 Dependency설정을 추가합니다.
     
     
 ### Transaction : 사용후 반드시 DAO를 close해야함.
-메서드 파라미터에서 사용시, 메서드 레벨 실행 후 close()호출함
  
     DAO dao = new DAO(new Transaction());
     dao.close();
-    GDAO<User> gdao = new GDAO<User>(new Transaction());
-    gdao.close();
     
     
 ## TableMaker.class, PackageCreator.class
@@ -106,22 +108,20 @@ pom.xml에 아래의 레파지토리와 Dependency설정을 추가합니다.
 ### Example Model
     @Table
     public class User {
-        @Key(AUTO_INCREMENT = true)
-    	private Integer id;
-    	@Column(DATA_TYPE="TEXT", function="INDEX")
-    	private String introduce;
+        @Key(AUTO_INCREMENT = true) //프라이머리 키
+        private Integer id;
+    	@Column(DATA_TYPE="TEXT", function="INDEX") //칼럼 설정, 이름, 데이터 타입등
+        private String introduce;
     	private Integer age;
         
-        @Exclude
-    	private static final String EMAIL_PATTERN =
+        @Exclude //라이브러리에서 무시할 필드
+        private static final String EMAIL_PATTERN =
     	"^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"+
     		"[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
         
         @RegexFormat(EMAIL_PATTERN)
+        // 포맷에 맞지 않으면 insert, update하지않고 RegexNotMatchedException을 발생시킴                  
         private String email;
-        
-        @OtherTable
-        private List<Post> posts;
         
     }
 
