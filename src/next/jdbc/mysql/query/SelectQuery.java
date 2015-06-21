@@ -119,14 +119,14 @@ public class SelectQuery<T> {
 	 * limit 조건을 부여합니다.
 	 * <p>
 	 *
-	 * @param begin
+	 * @param start
 	 *            시작값
-	 * @param end
+	 * @param size
 	 *            범위
 	 * @return QueryNeedFieldForSelect
 	 */
-	public SelectQuery<T> limit(int begin, int end) {
-		limit = new Limit(begin, end);
+	public SelectQuery<T> limit(int start, int size) {
+		limit = new Limit(start, size);
 		return this;
 	}
 

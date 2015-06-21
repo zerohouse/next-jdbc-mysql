@@ -40,14 +40,14 @@ public class QueryNeedConditionForSelect<T> {
 	 * limit 조건을 부여합니다.
 	 * <p>
 	 *
-	 * @param begin
+	 * @param start
 	 *            시작값
-	 * @param end
+	 * @param size
 	 *            범위
 	 * @return QueryNeedFieldForSelect
 	 */
-	public QueryNeedConditionForSelect<T> limit(int begin, int end) {
-		query.limit = new Limit(begin, end);
+	public QueryNeedConditionForSelect<T> limit(int start, int size) {
+		query.limit = new Limit(start, size);
 		return this;
 	}
 
