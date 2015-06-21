@@ -24,8 +24,8 @@ public class JoinNamer implements TableNamer {
 
 	@Override
 	public String getName() {
-		return String.format(JOIN, left.getName(), join.getJoinType().getType(), right.getName(), typeAnalyzer.get(join.getLeftOnFieldName()).getColumnName(),
-				typeAnalyzer.get(join.getRightOnFieldName()).getColumnName());
+		return String.format(JOIN, left.getName(), join.getJoinType().getType(), right.getName(), typeAnalyzer.getColumnName(join.getLeftOnFieldName()),
+				typeAnalyzer.getColumnName(join.getLeftOnFieldName()));
 	}
 
 }

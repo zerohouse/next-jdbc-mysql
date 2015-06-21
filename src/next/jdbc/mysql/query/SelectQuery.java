@@ -6,6 +6,7 @@ import java.util.Map;
 
 import next.jdbc.mysql.DAOQuery;
 import next.jdbc.mysql.query.support.Delimiter;
+import next.jdbc.mysql.query.support.GroupBy;
 import next.jdbc.mysql.query.support.Typer;
 import next.jdbc.mysql.query.support.Limit;
 import next.jdbc.mysql.query.support.OrderBy;
@@ -18,12 +19,15 @@ public class SelectQuery<T> {
 	Typer typeAnalyzer;
 	Limit limit;
 	OrderBy orderBy;
+	GroupBy groupBy;
 	Class<T> type;
 	DAOQuery dao;
+	boolean distinct;
 
 	public SelectQuery(DAOQuery dao, Class<T> type) {
 		this.type = type;
 		orderBy = new OrderBy();
+		groupBy = new GroupBy();
 		typeAnalyzer = new Typer(type);
 		this.dao = dao;
 	}
@@ -37,10 +41,12 @@ public class SelectQuery<T> {
 		String fields = ASTAR;
 		if (select != null) {
 			StringBuilder builder = new StringBuilder();
+			if (distinct)
+				builder.append(DISTNCT);
 			Delimiter limiter = new Delimiter(COMMA);
 			select.forEach(name -> {
 				builder.append(limiter.get());
-				builder.append(typeAnalyzer.get(name).getColumnName());
+				builder.append(typeAnalyzer.getColumnName(name));
 			});
 			fields = builder.toString();
 		}
@@ -48,6 +54,9 @@ public class SelectQuery<T> {
 		if (where != null) {
 			result.append(WHERE);
 			result.concat(where);
+		}
+		if (!groupBy.isEmpty()) {
+			groupBy.groupBy(result.getQuery());
 		}
 		if (!orderBy.isEmpty()) {
 			orderBy.orderBy(result.getQuery());
@@ -59,6 +68,7 @@ public class SelectQuery<T> {
 	}
 
 	private static final String FORMAT = "SELECT %s from %s";
+	private static final String DISTNCT = " DISTINCT ";
 	private static final String ASTAR = "*";
 	private static final String COMMA = ",";
 	private static final String WHERE = " WHERE ";
@@ -144,7 +154,7 @@ public class SelectQuery<T> {
 	 */
 
 	public SelectQuery<T> orderBy(String fieldName, boolean desc) {
-		orderBy.order(typeAnalyzer.get(fieldName).getColumnName(), desc);
+		orderBy.order(typeAnalyzer.getColumnName(fieldName), desc);
 		return this;
 	}
 
@@ -169,7 +179,7 @@ public class SelectQuery<T> {
 	 * @param fieldNames
 	 *            선택한 필드
 	 *
-	 * @return QueryNeedConditionForSelect
+	 * @return SelectQuery
 	 */
 	public SelectQuery<T> select(String... fieldNames) {
 		makeSelect();
@@ -187,4 +197,29 @@ public class SelectQuery<T> {
 		if (where == null)
 			where = new Sql();
 	}
+
+	/**
+	 * 
+	 * 중복되지 않게 선택합니다.
+	 * 
+	 * @return SelectQuery
+	 */
+	public SelectQuery<T> distinct() {
+		distinct = true;
+		return this;
+	}
+
+	/**
+	 * 
+	 * 해당 칼럼으로 그룹화하여 선택합니다.
+	 * 
+	 * @return
+	 * 
+	 * @return SelectQuery
+	 */
+	public SelectQuery<T> groupBy(String fieldName) {
+		groupBy.group(typeAnalyzer.getColumnName(fieldName));
+		return this;
+	}
+
 }

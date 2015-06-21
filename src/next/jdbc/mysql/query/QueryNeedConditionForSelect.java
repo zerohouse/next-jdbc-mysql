@@ -134,4 +134,16 @@ public class QueryNeedConditionForSelect<T> {
 		return query.toString();
 	}
 
+	/**
+	 * 
+	 * 중복되지 않게 선택합니다.
+	 * 
+	 * @return QueryNeedConditionForSelect
+	 */
+
+	public QueryNeedConditionForSelect<T> distinct() {
+		query.distinct();
+		return this;
+	}
+
 }

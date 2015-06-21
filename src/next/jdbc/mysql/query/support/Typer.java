@@ -41,6 +41,13 @@ public class Typer {
 		}
 	}
 
+	public String getColumnName(String fieldName) {
+		FieldInfo info = map.get(fieldName);
+		if (info == null)
+			return fieldName;
+		return info.getColumnName();
+	}
+
 	public FieldInfo get(String fieldName) {
 		FieldInfo info = map.get(fieldName);
 		if (info == null)
