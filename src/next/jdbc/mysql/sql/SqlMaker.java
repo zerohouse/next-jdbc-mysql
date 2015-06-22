@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import next.jdbc.mysql.sql.analyze.Analyzer;
+import next.jdbc.mysql.sql.analyze.ObjectAnalyzer;
 import next.jdbc.mysql.sql.analyze.bind.Fields;
 
 public class SqlMaker {
@@ -22,7 +23,7 @@ public class SqlMaker {
 		Sql result = analyzer.getNotNullAllFields().getQuery(EQ, AND);
 		return result.setQuery(String.format(SELECT, ASTAR, analyzer.getTableName(), result.getQueryString()));
 	}
-	
+
 	public Sql select(Analyzer analyzer, String... keyFieldName) {
 		Fields key = new Fields();
 		List<String> keyFields = Arrays.asList(keyFieldName);
@@ -76,6 +77,21 @@ public class SqlMaker {
 		return result.setQuery(String.format(DELETE, analyzer.getTableName(), result.getQueryString()));
 	}
 
+	public Sql delete(ObjectAnalyzer objectAnalyzer, String[] keyFieldNames) {
+		Fields key = new Fields();
+		List<String> keyFields = Arrays.asList(keyFieldNames);
+		objectAnalyzer.getAllFields().forEach(field -> {
+			if (keyFields.contains(field.getField().getName())) {
+				key.add(field);
+				return;
+			}
+		});
+		Sql query = new Sql();
+		Sql keys = key.getQuery(EQ, AND);
+		query.concatParameters(keys);
+		return query.setQuery(String.format(DELETE, objectAnalyzer.getTableName(), keys.getQueryString()));
+	}
+
 	private static final String QC = "?, ";
 
 	private final static String INSERT_IF_EXISTS_UPDATE = "INSERT INTO %s (%s) VALUES (%s) ON DUPLICATE KEY UPDATE %s";
@@ -86,8 +102,8 @@ public class SqlMaker {
 		Sql query = new Sql();
 		query.concatParameters(notNullfields);
 		query.concatParameters(fields);
-		return query.setQuery(String.format(INSERT_IF_EXISTS_UPDATE, analyzer.getTableName(), notNullfields.getQueryString(),
-				makeQ(notNullfields.size()), fields.getQueryString()));
+		return query.setQuery(String.format(INSERT_IF_EXISTS_UPDATE, analyzer.getTableName(), notNullfields.getQueryString(), makeQ(notNullfields.size()),
+				fields.getQueryString()));
 	}
 
 	public String makeQ(int length) {

@@ -239,6 +239,26 @@ public class DAO extends DAOQuery {
 		return execute(query);
 	}
 
+	/**
+	 * Object를 삭제합니다. 키필드를 지정합니다.
+	 * <p>
+	 *
+	 * @param object
+	 *            삭제할 object
+	 * @param keyFieldNames
+	 *            업데이트할 오브젝트의 keyField
+	 * @return boolean 실행결과
+	 */
+	public boolean delete(Object object, String... keyFieldNames) {
+		if (Join.class.isAssignableFrom(object.getClass())) {
+			@SuppressWarnings("rawtypes")
+			Join join = (Join) object;
+			return delete(join.getLeft(), keyFieldNames) && delete(join.getRight(), keyFieldNames);
+		}
+		Sql query = maker.delete(new ObjectAnalyzer(object), keyFieldNames);
+		return execute(query);
+	}
+
 	private boolean execute(Sql query) {
 		return execute(query.getQueryString(), query.getParameterArray());
 	}
