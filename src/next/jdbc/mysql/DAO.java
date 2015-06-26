@@ -3,7 +3,6 @@ package next.jdbc.mysql;
 import java.util.List;
 import java.util.Map;
 
-import next.jdbc.mysql.join.Join;
 import next.jdbc.mysql.sql.Sql;
 import next.jdbc.mysql.sql.SqlMaker;
 import next.jdbc.mysql.sql.analyze.Analyzer;
@@ -156,11 +155,6 @@ public class DAO extends DAOQuery {
 	 * @return boolean 실행결과
 	 */
 	public boolean insert(Object object) {
-		if (Join.class.isAssignableFrom(object.getClass())) {
-			@SuppressWarnings("rawtypes")
-			Join join = (Join) object;
-			return insert(join.getLeft()) && insert(join.getRight());
-		}
 		Sql query = maker.insert(new ObjectAnalyzer(object));
 		return execute(query);
 	}
@@ -174,11 +168,6 @@ public class DAO extends DAOQuery {
 	 * @return boolean 실행결과
 	 */
 	public boolean insertIfExistUpdate(Object object) {
-		if (Join.class.isAssignableFrom(object.getClass())) {
-			@SuppressWarnings("rawtypes")
-			Join join = (Join) object;
-			return insertIfExistUpdate(join.getLeft()) && insertIfExistUpdate(join.getRight());
-		}
 		Sql query = maker.insertIfExistUpdate(new ObjectAnalyzer(object));
 		return execute(query);
 	}
@@ -192,11 +181,6 @@ public class DAO extends DAOQuery {
 	 * @return boolean 실행결과
 	 */
 	public boolean update(Object object) {
-		if (Join.class.isAssignableFrom(object.getClass())) {
-			@SuppressWarnings("rawtypes")
-			Join join = (Join) object;
-			return update(join.getLeft()) && update(join.getRight());
-		}
 		Sql query = maker.update(new ObjectAnalyzer(object));
 		return execute(query);
 	}
@@ -212,11 +196,6 @@ public class DAO extends DAOQuery {
 	 * @return boolean 실행결과
 	 */
 	public boolean update(Object object, String... keyFieldNames) {
-		if (Join.class.isAssignableFrom(object.getClass())) {
-			@SuppressWarnings("rawtypes")
-			Join join = (Join) object;
-			return update(join.getLeft(), keyFieldNames) && update(join.getRight(), keyFieldNames);
-		}
 		Sql query = maker.update(new ObjectAnalyzer(object), keyFieldNames);
 		return execute(query);
 	}
@@ -230,11 +209,6 @@ public class DAO extends DAOQuery {
 	 * @return boolean 실행결과
 	 */
 	public boolean delete(Object object) {
-		if (Join.class.isAssignableFrom(object.getClass())) {
-			@SuppressWarnings("rawtypes")
-			Join join = (Join) object;
-			return delete(join.getLeft()) && delete(join.getRight());
-		}
 		Sql query = maker.delete(new ObjectAnalyzer(object));
 		return execute(query);
 	}
@@ -250,11 +224,6 @@ public class DAO extends DAOQuery {
 	 * @return boolean 실행결과
 	 */
 	public boolean delete(Object object, String... keyFieldNames) {
-		if (Join.class.isAssignableFrom(object.getClass())) {
-			@SuppressWarnings("rawtypes")
-			Join join = (Join) object;
-			return delete(join.getLeft(), keyFieldNames) && delete(join.getRight(), keyFieldNames);
-		}
 		Sql query = maker.delete(new ObjectAnalyzer(object), keyFieldNames);
 		return execute(query);
 	}

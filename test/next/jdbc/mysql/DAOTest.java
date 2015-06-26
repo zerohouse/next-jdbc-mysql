@@ -3,7 +3,6 @@ package next.jdbc.mysql;
 import static org.junit.Assert.*;
 import next.jdbc.mysql.example.model.Message;
 import next.jdbc.mysql.example.model.User;
-import next.jdbc.mysql.example.model.join.UserMessage;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -45,15 +44,7 @@ public class DAOTest {
 		Message message = new Message();
 		message.setId(3);
 		message.setHead("testtttt");
-		UserMessage m = new UserMessage(user, message);
-		System.out.println(dao.update(m));
-
-	}
-
-	@Test
-	public void joins() throws NoSuchMethodException, SecurityException {
-		System.out.println(DAO.class.getMethod("find", Object.class).getParameters()[0].getName());
-		System.out.println(dao.getList(UserMessage.class, "SELECT * FROM User LEFT JOIN Message ON User.id = Message.from WHERE User.`id`=?", 1));
+		System.out.println(dao.getSelectQuery(User.class).join(Message.class).on("User.id", "Message.from").field("id").equal("3").find());
 
 	}
 

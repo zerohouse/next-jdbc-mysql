@@ -1,11 +1,11 @@
 package next.jdbc.mysql.query.support;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.ParameterizedType;
 import java.util.HashMap;
 import java.util.Map;
 
-import next.jdbc.mysql.join.Join;
+import next.jdbc.mysql.annotation.Table;
+import next.jdbc.mysql.constants.Constants;
 import next.jdbc.mysql.query.support.exception.FieldNotFoundException;
 import next.jdbc.mysql.sql.analyze.info.FieldInfo;
 import next.jdbc.mysql.sql.analyze.info.TableInfo;
@@ -13,26 +13,23 @@ import next.jdbc.mysql.sql.analyze.info.TableInfo;
 public class Typer {
 
 	Map<String, FieldInfo> map;
-	private TableNamer namer;
+	String tableName;
 
 	public Typer(Class<?> type) {
 		map = new HashMap<String, FieldInfo>();
-		namer = TableNamer.get(type, this);
+		tableName = getTableName(type);
 		object(type);
 	}
 
-	private void join(Class<?> type) {
-		object((Class<?>) ((ParameterizedType) type.getGenericSuperclass()).getActualTypeArguments()[0]);
-		object((Class<?>) ((ParameterizedType) type.getGenericSuperclass()).getActualTypeArguments()[1]);
+	public static String getTableName(Class<?> type) {
+		Table table = type.getAnnotation(Table.class);
+		String result = table.value().equals("") ? type.getSimpleName() : table.value();
+		return Constants.wrapped(result);
 	}
 
 	private static final String DOT = ".";
 
 	private void object(Class<?> type) {
-		if (Join.class.isAssignableFrom(type)) {
-			join(type);
-			return;
-		}
 		Field[] fields = type.getDeclaredFields();
 		TableInfo info = new TableInfo(type);
 		for (int i = 0; i < fields.length; i++) {
@@ -56,7 +53,14 @@ public class Typer {
 	}
 
 	public String getTableName() {
-		return namer.getName();
+		return tableName;
 	}
 
+	public void concat(Typer typer) {
+		this.map.putAll(typer.map);
+	}
+
+	public void setTableName(String tableName) {
+		this.tableName = tableName;
+	}
 }

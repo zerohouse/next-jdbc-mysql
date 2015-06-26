@@ -167,7 +167,7 @@ public class SelectQuery<T> {
 	 *
 	 * @return QueryNeedValueForSelect
 	 */
-	public QueryNeedValueForSelect<T> whereField(String fieldName) {
+	public QueryNeedValueForSelect<T> field(String fieldName) {
 		makeWhere();
 		return new QueryNeedValueForSelect<T>(fieldName, this);
 	}
@@ -220,6 +220,18 @@ public class SelectQuery<T> {
 	public SelectQuery<T> groupBy(String fieldName) {
 		groupBy.group(typeAnalyzer.getColumnName(fieldName));
 		return this;
+	}
+
+	/**
+	 * 
+	 * 해당 테이블과 조인합니다.
+	 * 
+	 * @return
+	 * 
+	 * @return QueryNeedOnFields
+	 */
+	public QueryNeedOnFields<T> join(Class<?> type) {
+		return new QueryNeedOnFields<T>(this, type);
 	}
 
 }

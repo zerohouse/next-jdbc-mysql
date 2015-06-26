@@ -1,4 +1,4 @@
-# Next-JDBC-MYSQL Library 0.0.5
+# Next-JDBC-MYSQL Library 0.0.6
 JDBC를 한줄로!
 
     DAO dao = new DAO();
@@ -24,7 +24,7 @@ pom.xml에 아래의 레파지토리와 Dependency설정을 추가합니다.
     <dependency>
         <groupId>at.begin</groupId>
 		<artifactId>next-jdbc-mysql</artifactId>
-		<version>0.0.5</version>
+		<version>0.0.6</version>
 	</dependency>
 
 
@@ -128,25 +128,8 @@ pom.xml에 아래의 레파지토리와 Dependency설정을 추가합니다.
 
 #Join
 
-### Join Model Example
-    public class UserMessage extends Join<User, Message> {
-    
-        public UserMessage(User left, Message right) {
-    		super(left, right);
-    		this.joinType = JoinType.LEFT; // default INNER
-    	}
-    
-    	@Override
-    	public String getLeftOnFieldName() {
-    		return "id"; // User field id;
-    	}
-    
-    	@Override
-    	public String getRightOnFieldName() {
-    		return "from"; // Message field from;
-    	}
-    
-    }
+### Join Example
+   dao.getSelectQuery(User.class).join(Message.class).on("User.id", "Message.from").field("id").equal("3").asMapList();
 
   
 

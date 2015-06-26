@@ -6,9 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import next.jdbc.mysql.join.Join;
 import next.jdbc.mysql.sql.analyze.Analyzer;
-import next.jdbc.mysql.sql.analyze.JoinTypeAnalyzer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,8 +32,6 @@ public class ModelMaker {
 	public static Object setByMap(Class<?> type, Object object, Map<String, Object> recordMap, Analyzer analyzer) {
 		if (recordMap == null)
 			return null;
-		if (Join.class.isAssignableFrom(type))
-			return getJoinSet(recordMap, (JoinTypeAnalyzer) analyzer);
 		if (object == null)
 			object = newInstance(type);
 		Object result = object;
@@ -132,11 +128,4 @@ public class ModelMaker {
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")
-	public static <LEFT, RIGHT> Join<LEFT, RIGHT> getJoinSet(Map<String, Object> recordMap, JoinTypeAnalyzer analyzer) {
-		Join<LEFT, RIGHT> join = analyzer.getJoin();
-		join.setLeft((LEFT) setByMap(analyzer.getLeftType(), join.getLeft(), recordMap, analyzer.getLeftAnalyzer()));
-		join.setRight((RIGHT) setByMap(analyzer.getRightType(), join.getRight(), recordMap, analyzer.getRightAnalyzer()));
-		return join;
-	}
 }

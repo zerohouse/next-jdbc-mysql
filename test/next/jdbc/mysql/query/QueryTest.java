@@ -21,6 +21,6 @@ public class QueryTest {
 		dao.delete(new User("parksungho86@gmail.com", "newPassword")); //DELETE FROM `User` WHERE `User`.`email`=? AND `User`.`password`=?, Parameters : [parksungho86@gmail.com, newPassword]
 		// dao.getRecord(sql, parameters);
 		// dao.getRecords(sql, parameters)
-		dao.getSelectQuery(User.class).whereField("email").like("pa").or().field("password").equal("3").limit(3, 4).orderBy("id").asMap(); //SELECT * from `User` WHERE `User`.`email` LIKE '%pa%' OR `User`.`password`=? ORDER BY `User`.`id` LIMIT 3,4, Parameters : [3]
+		dao.getSelectQuery(User.class).field("email").like("pa").or().field("password").equal("3").limit(3, 4).orderBy("id").asMap(); //SELECT * from `User` WHERE `User`.`email` LIKE '%pa%' OR `User`.`password`=? ORDER BY `User`.`id` LIMIT 3,4, Parameters : [3]
 	}
 }
